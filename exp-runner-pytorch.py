@@ -225,8 +225,8 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         y = trainY[start_index: index]
 
         # l'input del modello deve essere (B, F, N, T)
-        x = np.transpose(x, (0,3,2,1))
-        y = np.transpose(y, (0,2,1))
+        x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
+        #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
 
         device = 'cuda:0'
         x = torch.Tensor(x).to(device)
@@ -236,7 +236,8 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         model.train()
         optimizer.zero_grad()
         #input = nn.functional.pad(input, (1,0,0,0))
-        pred = model(x) # [B,T,N,12]
+        pred = model(x)  # [B,T,N,12]
+        pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12:  [B,T,N]
         #output = output.transpose(1,3)
         #real = torch.unsqueeze(real_val, dim=1)
         #predict = output  # no scaler
