@@ -75,7 +75,7 @@ class GWNet(nn.Module):
 
         # 1x1 convolution for residual and skip connections (slightly different see docstring)
         self.residual_convs = ModuleList([Conv1d(dilation_channels, residual_channels, (1, 1)) for _ in depth])
-        self.skip_convs = ModuleList([Conv1d(dilation_channels, skip_channels, (1, 1)) for _ in depth])
+        self.skip_convs = ModuleList([Conv2d(dilation_channels, skip_channels, (1, 1)) for _ in depth])
         self.bn = ModuleList([BatchNorm2d(residual_channels) for _ in depth])
         self.graph_convs = ModuleList([GraphConvNet(dilation_channels, residual_channels, dropout, support_len=self.supports_len)
                                               for _ in depth])
@@ -88,7 +88,7 @@ class GWNet(nn.Module):
             for i in range(layers):
                 # dilated convolutions
                 self.filter_convs.append(Conv2d(residual_channels, dilation_channels, (1, kernel_size), dilation=D))
-                self.gate_convs.append(Conv1d(residual_channels, dilation_channels, (1, kernel_size), dilation=D))
+                self.gate_convs.append(Conv2d(residual_channels, dilation_channels, (1, kernel_size), dilation=D))
                 D *= 2
                 receptive_field += additional_scope
                 additional_scope *= 2
