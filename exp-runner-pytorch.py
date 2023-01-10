@@ -118,9 +118,9 @@ def create_timeseries(timeseries_path, test_file_path, h, p, stride, mini_datase
     testY = Y[test_indexes]
 
     # Dall'Y prendo solo la label
-    #trainY = trainY[..., 0]
-    #valY = valY[..., 0]
-    #testY = testY[..., 0]
+    trainY = trainY[..., 0]
+    valY = valY[..., 0]
+    testY = testY[..., 0]
 
     logger.warning('Loading and preprocessing complete with shapes:' +
                    '\n\tTrainX shape: ' + str(trainX.shape) +
@@ -227,7 +227,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         #x = trainX[start_index: index]
         #y = trainY[start_index: index]
 
-        dataset = torch.utils.data.TensorDataset(trainX[start_index : index], trainY[start_index : index])
+        dataset = torch.utils.data.TensorDataset(torch.Tensor(trainX[start_index : index]).to(device), torch.Tensor(trainY[start_index : index]).to(device))
         training_loader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=1)
         for i, data in enumerate(training_loader):
 
