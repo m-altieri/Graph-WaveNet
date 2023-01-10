@@ -511,7 +511,7 @@ class ExperimentRunner():
             learning_rate = args.learning_rate
             logger.info(f'Using {learning_rate} learning rate.')
 
-        loss = util.masked_mae
+        #loss = util.masked_mae
         epochs = model_p['epochs']
         if args.epochs:
             epochs = args.epochs
