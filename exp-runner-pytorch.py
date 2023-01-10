@@ -118,9 +118,9 @@ def create_timeseries(timeseries_path, test_file_path, h, p, stride, mini_datase
     testY = Y[test_indexes]
 
     # Dall'Y prendo solo la label
-    trainY = trainY[..., 0]
-    valY = valY[..., 0]
-    testY = testY[..., 0]
+    #trainY = trainY[..., 0]
+    #valY = valY[..., 0]
+    #testY = testY[..., 0]
 
     logger.warning('Loading and preprocessing complete with shapes:' +
                    '\n\tTrainX shape: ' + str(trainX.shape) +
