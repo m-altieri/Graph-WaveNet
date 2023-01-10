@@ -182,7 +182,7 @@ def create_adj(adj_path=None, sequence=None, show=False, save=False):
     return adj
 
 
-def build_model(model_type, loss, nodes, features=None, history_steps=None, prediction_steps=None, adj=None, order=4, **kwargs):
+def build_model(model_type, nodes, features=None, history_steps=None, prediction_steps=None, adj=None, order=4, **kwargs):
     logger.warning('Starting model construction for model type {}....'.format(model_type))
 
     model = GWNet(
@@ -196,7 +196,7 @@ def build_model(model_type, loss, nodes, features=None, history_steps=None, pred
     return model
 
 
-def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, loss, nodes, features, history_steps, prediction_steps, adj,
+def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj,
                       batch_size, epochs, replay, interval, model_name, checkpoint=False, checkpoint_path=None, lr_scheduler=False, lrs_monitor=None,
                       lrs_factor=None, lrs_patience=None, early_stopping=False, es_monitor=None, es_patience=None, es_restore=None, single_node_model=False, node=0, dynamic_adj=False, order=4, **kwargs):
     logger.info('Training starting with:' +
@@ -586,17 +586,17 @@ class ExperimentRunner():
             multipreds = saved_preds.copy()  # Inizia con quelle già salvate, poi aggiungo le nuove
             for n in range(self.starting_node, nodes):
                 logger.warning('Starting training for node ' + str(n))
-                model = build_model(model_p['alias'], loss, nodes, features, history_steps, prediction_steps, adj=adj, order=order)
+                model = build_model(model_p['alias'], nodes, features, history_steps, prediction_steps, adj=adj, order=order)
                 optimizer = torch.optim.Adam(lr=learning_rate, params=model.parameters(), weight_decay=0.0001)
                 model.set_node(n)
-                preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, loss, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
+                preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
                                           checkpoint, checkpoint_path, lr_scheduler, lrs_monitor, lrs_factor, lrs_patience, early_stopping, es_monitor, es_patience, es_restore, single_node_model, node=n, dynamic_adj=dynamic_adj, summary=self.summaries_path)
                 multipreds.append(preds)
                 np.save(f'{preds_path}({n}).npy', preds)
         else:
-            model = build_model(model_p['alias'], loss, nodes, features, history_steps, prediction_steps, adj=adj, order=order)
+            model = build_model(model_p['alias'], nodes, features, history_steps, prediction_steps, adj=adj, order=order)
             optimizer = torch.optim.Adam(lr=learning_rate, params=model.parameters(), weight_decay=0.0001)
-            preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, loss, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
+            preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
                                       checkpoint, checkpoint_path, lr_scheduler, lrs_monitor, lrs_factor, lrs_patience, early_stopping, es_monitor, es_patience, es_restore, single_node_model, dynamic_adj=dynamic_adj, summary=self.summaries_path)
         # Log execution time
         endTime = time.time()
