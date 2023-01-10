@@ -21,7 +21,7 @@ import utils.math, utils.logging, utils.sequence
 # PyTorch
 import torch
 import torch.nn as nn
-import gwnet_util
+import util
 
 # Models
 sys.path.append('/lustrehome/altieri/research/src/models')
