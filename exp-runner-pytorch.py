@@ -210,7 +210,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 f'Epochs: {epochs}')
 
     preds = []
-    
+
     device = 'cuda:0'
     model.train()
     optimizer.zero_grad()
@@ -228,7 +228,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         #x = trainX[start_index: index]
         #y = trainY[start_index: index]
 
-        dataset = torch.utils.data.TensorDataset(torch.Tensor(trainX[start_index : index]).to(device), torch.Tensor(trainY[start_index : index]).to(device))
+        dataset = torch.utils.data.TensorDataset(torch.Tensor(trainX[start_index : index]), torch.Tensor(trainY[start_index : index]))
         training_loader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=1)
         for i, data in enumerate(training_loader):
 
