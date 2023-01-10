@@ -50,7 +50,8 @@ argparser.add_argument('--distributed', action='store_const', const=True, help='
 argparser.add_argument('--adj', action='store', choices=['ones', 'closeness', 'corr'], help='run the experiment in distributed mode. use only with horovodrun.')
 args = argparser.parse_args()
 
-PATH = '/lustrehome/altieri/research' if args.recas else '..'
+#PATH = '/lustrehome/altieri/research' if args.recas else '..'
+PATH = '.'
 
 # Create logger
 log_file_name = '{}-{}-{}.log'.format(args.model, args.dataset, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
