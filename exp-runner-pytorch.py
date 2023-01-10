@@ -255,7 +255,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
             optimizer.step()
 
         logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
-        pred = model(torch.Tensor(np.expand_dims(np.transpose(testX[i], (2,1,0)), 0)))
+        pred = model(torch.Tensor(np.expand_dims(np.transpose(testX[i], (2,1,0)), 0)).to(device))
         logger.info(f'pred #{i} shape: {pred.size()}')
         preds.append(pred.detach().cpu().numpy())
             
