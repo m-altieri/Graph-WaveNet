@@ -5,3 +5,4 @@ preds.csv
 .ipynb_checkpoints/
 .DS_Store
 *.pkl
+data
