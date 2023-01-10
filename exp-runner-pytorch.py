@@ -236,9 +236,9 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         #real = torch.unsqueeze(real_val, dim=1)
         #predict = output  # no scaler
 
-        loss = util.masked_mae(pred, y, 0.0)  # è quella che usa
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
+        mae, mape, rmse = util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
+        mae.backward()
+        #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
         optimizer.step()
 
         
