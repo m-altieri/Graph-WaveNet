@@ -210,7 +210,8 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 f'Epochs: {epochs}')
 
     preds = []
-
+    
+    device = 'cuda:0'
     model.train()
     optimizer.zero_grad()
 
@@ -239,7 +240,6 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
             x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
             #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
 
-            device = 'cuda:0'
             x = torch.Tensor(x).to(device)
             y = torch.Tensor(y).to(device)
 
