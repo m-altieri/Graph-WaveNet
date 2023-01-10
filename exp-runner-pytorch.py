@@ -248,7 +248,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         optimizer.step()
 
         
-        preds.append(pred)
+        preds.append(pred.cpu().numpy())
             
         #model.fit(, batch_size=batch_size, epochs=epochs, callbacks=callbacks, validation_data=None, shuffle=False)
         #pred = model.predict(np.expand_dims(testX[i], 0), batch_size=1)
