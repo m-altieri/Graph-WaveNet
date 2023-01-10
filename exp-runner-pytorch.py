@@ -247,7 +247,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
         optimizer.step()
 
-        
+        logger.info(f'pred #{i} shape: {pred.size()}')
         preds.append(pred.detach().cpu().numpy())
             
         #model.fit(, batch_size=batch_size, epochs=epochs, callbacks=callbacks, validation_data=None, shuffle=False)
@@ -630,62 +630,4 @@ class ExperimentRunner():
             logger.info(f'stack(multipreds, axis=2): {np.shape(multipreds)} -> {np.shape(np.stack(multipreds, axis=2))}')
 
         avg_mae, avg_rmse, avg_smape, std_mae, std_rmse, std_smape = evaluate(preds, testY)
-        logger.info(f'Writing results:\n\tavg_mae: {avg_mae:.4f}\n\tavg_rmse: {avg_rmse:.4f}\n\tavg_smape: {avg_smape:.4f}\n\tstd_mae: {std_mae:.4f}\n\tstd_rmse: {std_rmse:.4f}\n\tstd_smape: {std_smape:.4f}')
-        write_results(avg_mae, avg_rmse, avg_smape, std_mae, std_rmse, std_smape, run_path, meta_path, dataset_name, model_name, mini_dataset, features, allow_partial_batches, history_steps, prediction_steps, stride, batch_size, epochs, learning_rate, lr_scheduler, mode, trainingTime)
-
-        logger.warning('Evaluating complete.')
-
-        return model, preds  # For debugging purposes
-
-
-# Load config files
-experiment_params_path = os.path.join(PATH, 'experiments', 'config', 'experiment_params.json')
-model_params_path = os.path.join(PATH, 'experiments', 'config', 'model_params.json')
-dataset_params_path = os.path.join(PATH, 'experiments', 'config', 'dataset_params.json')
-experiment_params_file = open(experiment_params_path, 'r')
-model_params_file = open(model_params_path, 'r', encoding='utf-8-sig')
-dataset_params_file = open(dataset_params_path, 'r')
-experiment_params = json.load(experiment_params_file)
-model_params = json.load(model_params_file)
-dataset_params = json.load(dataset_params_file)
-
-defaultResultsFolder = f'undefined-{args.model}-{args.dataset}-{datetime.datetime.now().strftime("%H%M%S")}'
-if not args.output:
-    args.output = defaultResultsFolder
-
-if args.conf and not args.all:
-    runner = ExperimentRunner([args.model + '-' + args.conf], [args.dataset], os.path.join(PATH, 'experiments'), experiment_params, model_params, dataset_params, args.output)
-else:  # Prendo le conf a runtime da model_params.json
-    confs = []
-    for model in model_params['models']:
-        if model['alias'] == args.model:
-            finished = ExperimentRunner.is_finished(args.output, '{}-{}'.format(model['name'], args.dataset))
-            if args.skip_finished and finished:
-                logger.critical('Run {}-{} will be skipped, as it is already finished and flag --skip-finished is set.'.format(model['name'], args.dataset))
-                continue
-            confs.append(model['name'])
-
-    runner = ExperimentRunner(confs,
-                              [args.dataset],
-                              os.path.join(PATH, 'experiments'),
-                              experiment_params, model_params, dataset_params,
-                              name=args.output)
-
-if args.mode:
-    logger.critical('Mode (Overridden): ' + args.mode)
-    runner.override_mode = args.mode
-
-if args.wsize:
-    logger.critical('Window size (Overridden): ' + str(args.wsize))
-    runner.override_window = args.wsize
-
-runner.set_starting_node(args.starting_node)
-
-runner.set_prediction_seqs(args.prediction_seqs)
-
-if args.tensorboard:
-    runner.enable_tensorboard(os.path.join(PATH, 'log', '{}-{}-{}-summaries'.format(args.model, args.dataset, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))))
-
-if not args.collect_only:
-    runner.run_all()
-runner.collect_preds()
+        logger.info(f'Writing results:\n\tavg
