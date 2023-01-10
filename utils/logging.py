@@ -4,7 +4,7 @@ import os
 
 def create_logger(log_file_path):
     
-    is not os.path.exists(os.path.dirname(log_file_path)):
+    if not os.path.exists(os.path.dirname(log_file_path)):
         os.makedirs(os.path.dirname(log_file_path))
     log_file = open(log_file_path, 'w')
     logger = logging.getLogger()
