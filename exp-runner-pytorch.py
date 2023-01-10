@@ -226,8 +226,8 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
 
         # l'input del modello deve essere (B, F, N, T)
         x = np.transpose(x, (0,3,2,1))
-        y = np.transpose(y, (0,3,2,1))
-        
+        y = np.transpose(y, (0,2,1))
+
         device = 'cuda:0'
         x = torch.Tensor(x).to(device)
         y = torch.Tensor(y).to(device)
