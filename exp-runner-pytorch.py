@@ -227,7 +227,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         #x = trainX[start_index: index]
         #y = trainY[start_index: index]
 
-        training_loader = torch.utils.data.DataLoader(zip(trainX[start_index: index], trainY[start_index: index]), batch_size=4, shuffle=False, num_workers=2)
+        training_loader = torch.utils.data.DataLoader(zip(trainX[start_index: index], trainY[start_index: index]), batch_size=4, shuffle=False, num_workers=1)
         for i, data in enumerate(training_loader):
 
             x, y = data
