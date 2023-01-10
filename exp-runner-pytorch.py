@@ -26,7 +26,7 @@ import gwnet_util
 # Models
 sys.path.append('/lustrehome/altieri/research/src/models')
 sys.path.append('./models')
-from models.GraphWaveNet import gwnet
+from model import gwnet
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
