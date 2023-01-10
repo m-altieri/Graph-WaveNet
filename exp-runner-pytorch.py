@@ -232,7 +232,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         model.train()
         optimizer.zero_grad()
         #input = nn.functional.pad(input, (1,0,0,0))
-        pred = model(input) # [B,T,N,12]
+        pred = model(x) # [B,T,N,12]
         #output = output.transpose(1,3)
         #real = torch.unsqueeze(real_val, dim=1)
         #predict = output  # no scaler
