@@ -633,7 +633,7 @@ class ExperimentRunner():
             preds_df[model_name] = preds_merged.flatten(order='C')
         else:
             preds_df[model_name] = preds.flatten(order='C')
-        preds_df.to_csv(os.path.join(PATH, 'experiments', preds_path))
+        preds_df.to_csv(os.path.join(PATH, preds_path))
 
         # Model Evaluation
         logger.warning('Evaluating model...')
