@@ -230,7 +230,9 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
 
         dataset = torch.utils.data.TensorDataset(torch.Tensor(trainX[start_index : index]), torch.Tensor(trainY[start_index : index]))
         training_loader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=1)
-        for epoch in range(10):
+        epochs = 10  # args.epochs
+        for epoch in range(epochs):
+            train_loss = []
             for i, data in enumerate(training_loader):
 
                 x, y = data
@@ -254,6 +256,8 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 mae.backward()
                 #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
                 optimizer.step()
+                train_loss.append(mae)
+            logger.info(f'Epochs: {epoch}/{epochs}  (MAE: {np.mean(train_loss):.4f})')
 
         logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
         pred = model(torch.Tensor(np.expand_dims(np.transpose(testX[i], (2,1,0)), 0)).to(device))
