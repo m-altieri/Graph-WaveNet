@@ -1,3 +1,7 @@
+```
+docker run -it --gpus all --ipc=host <image_name>:<image_tag>
+```
+
 # Graph WaveNet for Deep Spatial-Temporal Graph Modeling
 
 This is the original pytorch implementation of Graph WaveNet in the following paper: 
