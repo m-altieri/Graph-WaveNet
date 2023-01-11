@@ -229,14 +229,14 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         #y = trainY[start_index: index]
 
         dataset = torch.utils.data.TensorDataset(torch.Tensor(trainX[start_index : index]), torch.Tensor(trainY[start_index : index]))
-        training_loader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=1)
+        training_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=1)
         
         for epoch in range(args.epochs):
             train_loss = []
 
             for i, data in enumerate(training_loader):
                 optimizer.zero_grad()
-                
+
                 x, y = data
                 #logger.info(f'Dataloader providing x: {x.shape}, y: {y.shape}')
 
@@ -254,11 +254,14 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 #output = output.transpose(1,3)
                 #real = torch.unsqueeze(real_val, dim=1)
                 #predict = output  # no scaler
+
                 mae, mape, rmse = util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
                 mae.backward()
                 #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
                 optimizer.step()
+                
                 train_loss.append(mae.detach().cpu().numpy())
+
             logger.info(f'Epochs: {epoch+1}/{epochs}  (MAE: {np.mean(train_loss):.4f})')
 
         logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
@@ -628,8 +631,7 @@ class ExperimentRunner():
         # Saving predictions. The CSV file rows are ALWAYS nodes first, timestep second, test sequence last.
         # Meaning that grouping N rows at once you abstract nodes, grouping T*N rows at once you abstract timesteps and nodes.
         # If you want to select predictions for node k you select rows k, k+N, k+2N, ..., k+STN.
-        logger.info(f'preds shape: {np.shape(preds)}')
-        logger.info(f'testY shape: {testY.flatten}')
+
         preds_df = pd.DataFrame()
         preds_df['truth'] = testY.flatten(order='C')
         if single_node_model:
