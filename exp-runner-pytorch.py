@@ -256,7 +256,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 mae.backward()
                 #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
                 optimizer.step()
-                train_loss.append(mae)
+                train_loss.append(mae.detach().cpu().numpy())
             logger.info(f'Epochs: {epoch}/{epochs}  (MAE: {np.mean(train_loss):.4f})')
 
         logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
