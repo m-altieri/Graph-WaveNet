@@ -256,6 +256,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
 
         logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
         pred = model(torch.Tensor(np.expand_dims(np.transpose(testX[i], (2,1,0)), 0)).to(device))
+        pred = pred.mean(dim=-1)
         logger.info(f'pred #{i} shape: {pred.size()}')
         preds.append(pred.detach().cpu().numpy())
             
@@ -620,6 +621,8 @@ class ExperimentRunner():
         # Saving predictions. The CSV file rows are ALWAYS nodes first, timestep second, test sequence last.
         # Meaning that grouping N rows at once you abstract nodes, grouping T*N rows at once you abstract timesteps and nodes.
         # If you want to select predictions for node k you select rows k, k+N, k+2N, ..., k+STN.
+        logger.info(f'preds shape: {np.shape(preds)}')
+        logger.info(f'testY shape: {testY.flatten}')
         preds_df = pd.DataFrame()
         preds_df['truth'] = testY.flatten(order='C')
         if single_node_model:
