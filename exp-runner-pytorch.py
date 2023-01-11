@@ -213,7 +213,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
 
     device = 'cuda:0'
     model.train()
-    optimizer.zero_grad()
+    # >>> stava qua zero_grad()
 
     last_index = 0
     for i, index in enumerate(test_indexes):
@@ -233,8 +233,10 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         
         for epoch in range(args.epochs):
             train_loss = []
-            for i, data in enumerate(training_loader):
 
+            for i, data in enumerate(training_loader):
+                optimizer.zero_grad()
+                
                 x, y = data
                 #logger.info(f'Dataloader providing x: {x.shape}, y: {y.shape}')
 
