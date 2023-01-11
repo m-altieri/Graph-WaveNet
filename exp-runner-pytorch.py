@@ -230,29 +230,30 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
 
         dataset = torch.utils.data.TensorDataset(torch.Tensor(trainX[start_index : index]), torch.Tensor(trainY[start_index : index]))
         training_loader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=False, num_workers=1)
-        for i, data in enumerate(training_loader):
+        for epoch in range(10):
+            for i, data in enumerate(training_loader):
 
-            x, y = data
-            logger.info(f'Dataloader providing x: {x.shape}, y: {y.shape}')
+                x, y = data
+                #logger.info(f'Dataloader providing x: {x.shape}, y: {y.shape}')
 
 
-            # l'input del modello deve essere (B, F, N, T)
-            x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
-            #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
+                # l'input del modello deve essere (B, F, N, T)
+                x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
+                #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
 
-            x = torch.Tensor(x).to(device)
-            y = torch.Tensor(y).to(device)
+                x = torch.Tensor(x).to(device)
+                y = torch.Tensor(y).to(device)
 
-            #input = nn.functional.pad(input, (1,0,0,0))
-            pred = model(x)  # [B,T,N,12]
-            pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12:  [B,T,N]
-            #output = output.transpose(1,3)
-            #real = torch.unsqueeze(real_val, dim=1)
-            #predict = output  # no scaler
-            mae, mape, rmse = util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
-            mae.backward()
-            #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
-            optimizer.step()
+                #input = nn.functional.pad(input, (1,0,0,0))
+                pred = model(x)  # [B,T,N,12]
+                pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12:  [B,T,N]
+                #output = output.transpose(1,3)
+                #real = torch.unsqueeze(real_val, dim=1)
+                #predict = output  # no scaler
+                mae, mape, rmse = util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
+                mae.backward()
+                #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
+                optimizer.step()
 
         logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
         pred = model(torch.Tensor(np.expand_dims(np.transpose(testX[i], (2,1,0)), 0)).to(device))
