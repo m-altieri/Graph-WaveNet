@@ -527,10 +527,11 @@ class ExperimentRunner():
         # l'unico modello supportato da --distributed è un single node model, ma normalmente il meccanismo deve essere automatizzato:
         # se il modello è single node, diventa multi node; se il modello è multi node, la distribuzione avviene con gradient sharing.
         # ancora meglio, implementare un meccanismo dove si seleziona la distribution strategy da utilizzare
-        batch_size = model_p['batch_size']
         if args.batch_size:
-            batch_size = args.batch_size
+            model_p['batch_size'] = args.batch_size
             logger.info(f'Using {batch_size} batch size.')
+        batch_size = model_p['batch_size']
+                
         save_attention_weights = model_p['save_attention_weights']
         learning_rate = model_p['learning_rate']
         if args.learning_rate:
