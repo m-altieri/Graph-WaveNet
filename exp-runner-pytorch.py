@@ -188,7 +188,7 @@ def build_model(model_type, nodes, features=None, history_steps=None, prediction
     model = GWNet(
         torch.device('cuda:0'), 
         num_nodes=nodes,
-        supports=adj,
+        supports=torch.Tensor(adj).to('cuda:0'),
         in_dim=features,
         out_dim=prediction_steps)
 

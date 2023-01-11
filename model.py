@@ -59,7 +59,8 @@ class GWNet(nn.Module):
                                         out_channels=residual_channels,
                                         kernel_size=(1, 1))
 
-        self.fixed_supports = supports if supports is not None else []
+        #self.fixed_supports = supports if supports is not None else []
+        self.fixed_supports = supports or []
         receptive_field = 1
 
         self.supports_len = len(self.fixed_supports)
