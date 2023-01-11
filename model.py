@@ -144,7 +144,6 @@ class GWNet(nn.Module):
         # calculate the current adaptive adj matrix once per iteration
         if self.addaptadj:
             adp = F.softmax(F.relu(torch.mm(self.nodevec1, self.nodevec2)), dim=1)
-            print(f'adp: {adp.shape}')
             adjacency_matrices = self.fixed_supports + [adp]
 
         # WaveNet layers
