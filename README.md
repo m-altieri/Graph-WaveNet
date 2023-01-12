@@ -9,7 +9,7 @@ sudo docker volume create experiments-vol
 sudo docker run -it -d \
 --gpus all --ipc host \
 --name GWNet-BS8LR1e-6E50 \
--v experiments-vol:/home/gwnet-repo/experiments 
+-v experiments-vol:/home/gwnet_repo/experiments 
 gwnet 'python3 exp-runner-pytorch.py -d test -o GWNet-BS8LR1e-6E50 -b 8 -l 1e-6 -e 50 GraphWaveNet wind-nrel'
 ```
 
