@@ -1,5 +1,6 @@
+Build image:
 ```
-docker run -it --gpus all --ipc=host <image_name>:<image_tag>
+sudo docker build -t gwnet --no-cache .
 ```
 
 Run detached container with GPU, mounted volume and running experiments with specified conf:
