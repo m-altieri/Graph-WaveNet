@@ -14,6 +14,11 @@ sudo docker run -it -d \
 gwnet 'python3 exp-runner-pytorch.py -d test -o GWNet-BS8LR1e-6E50 -b 8 -l 1e-6 -e 50 GraphWaveNet wind-nrel'
 ```
 
+Automatically run several detached containers at once with GPU, mounted volume and running experiments with the (same) specified conf:
+```
+sh run-containers.sh -b <BATCH_SIZE> -l <LEARNING_RATE> -e <EPOCHS> -r <RUNS>
+```
+
 # Graph WaveNet for Deep Spatial-Temporal Graph Modeling
 
 This is the original pytorch implementation of Graph WaveNet in the following paper: 
