@@ -2,9 +2,15 @@
 docker run -it --gpus all --ipc=host <image_name>:<image_tag>
 ```
 
-Run detached container with GPU and running experiments with specified conf:
+Run detached container with GPU, mounted volume and running experiments with specified conf:
 ```
-sudo docker run -it -d --gpus all --ipc host --name GWNet-BS8LR1e-6E50 -v experiments-vol:/home/gwnet-repo/experiments gwnet 'python3 exp-runner-pytorch.py -d test -o GWNet-BS8LR1e-6E50 -b 8 -l 1e-6 -e 50 GraphWaveNet wind-nrel'
+sudo docker volume create experiments-vol
+
+sudo docker run -it -d \
+--gpus all --ipc host \
+--name GWNet-BS8LR1e-6E50 \
+-v experiments-vol:/home/gwnet-repo/experiments 
+gwnet 'python3 exp-runner-pytorch.py -d test -o GWNet-BS8LR1e-6E50 -b 8 -l 1e-6 -e 50 GraphWaveNet wind-nrel'
 ```
 
 # Graph WaveNet for Deep Spatial-Temporal Graph Modeling
