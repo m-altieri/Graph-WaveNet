@@ -6,3 +6,4 @@ preds.csv
 .DS_Store
 *.pkl
 data
+experiments

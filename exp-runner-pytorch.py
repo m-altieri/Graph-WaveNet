@@ -533,17 +533,17 @@ class ExperimentRunner():
         batch_size = model_p['batch_size']
 
         save_attention_weights = model_p['save_attention_weights']
-        learning_rate = model_p['learning_rate']
+        
         if args.learning_rate:
-            learning_rate = args.learning_rate
-            logger.info(f'Using {learning_rate} learning rate.')
+            model_p['learning_rate'] = args.learning_rate
+        learning_rate = model_p['learning_rate']
 
-        #loss = util.masked_mae
-        epochs = model_p['epochs']
         if args.epochs:
-            epochs = args.epochs
-            logger.info(f'Using {epochs} epochs.')
-
+            model_p['epochs'] = args.epochs
+        epochs = model_p['epochs']
+    
+        #loss = util.masked_mae
+        
         checkpoint = model_p['checkpoint']
         checkpoint_path = None
         if checkpoint: checkpoint_path = os.path.join(PATH, 'checkpoints', model_name)
@@ -661,9 +661,9 @@ class ExperimentRunner():
 
 
 # Load config files
-experiment_params_path = os.path.join(PATH, 'experiments', 'config', 'experiment_params.json')
-model_params_path = os.path.join(PATH, 'experiments', 'config', 'model_params.json')
-dataset_params_path = os.path.join(PATH, 'experiments', 'config', 'dataset_params.json')
+experiment_params_path = os.path.join(PATH, 'config', 'experiment_params.json')
+model_params_path = os.path.join(PATH, 'config', 'model_params.json')
+dataset_params_path = os.path.join(PATH, 'config', 'dataset_params.json')
 experiment_params_file = open(experiment_params_path, 'r')
 model_params_file = open(model_params_path, 'r', encoding='utf-8-sig')
 dataset_params_file = open(dataset_params_path, 'r')
