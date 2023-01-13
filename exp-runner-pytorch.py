@@ -21,12 +21,12 @@ import utils.math, utils.logging, utils.sequence
 # PyTorch
 import torch
 import torch.nn as nn
-import util
 
 # Models
 sys.path.append('/lustrehome/altieri/research/src/models')
 sys.path.append('./models')
 from GWNet.model import GWNet
+import GWNet.util
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
@@ -256,7 +256,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 #real = torch.unsqueeze(real_val, dim=1)
                 #predict = output  # no scaler
 
-                mae, mape, rmse = util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
+                mae, mape, rmse = GWNet.util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
                 mae.backward()
                 #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
                 optimizer.step()
