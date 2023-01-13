@@ -248,7 +248,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         for epoch in range(args.epochs):
             train_loss = []
 
-            for i, data in enumerate(training_loader):
+            for data in training_loader:
                 optimizer.zero_grad()
 
                 x, y = data
