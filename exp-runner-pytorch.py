@@ -269,7 +269,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 #output = output.transpose(1,3)
                 #real = torch.unsqueeze(real_val, dim=1)
                 #predict = output  # no scaler
-                mae, mape, rmse = GWNet.util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
+                mae, mape, rmse = gwnet_util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
                 # ^^^ GWNet Stuff ^^^
 
 
