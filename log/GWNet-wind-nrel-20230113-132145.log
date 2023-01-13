@@ -1,0 +1,2 @@
+Args: Namespace(model='GWNet', dataset='wind-nrel', conf=None, all=None, output='GWNet-BS16LR1e-6E50--1', mode=None, wsize=None, starting_node=0, prediction_seqs='test', epochs=1, batch_size=16, learning_rate=1e-06, recas=None, collect_only=None, interpretable=None, skip_finished=None, tensorboard=None, distributed=None, adj=None)
+['GWNet', '.gitignore', 'exp-runner-pytorch.py', 'config', 'README.md', 'utils', '.git', 'log', 'experiments', 'data']

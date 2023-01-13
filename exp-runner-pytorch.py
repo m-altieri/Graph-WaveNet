@@ -23,9 +23,8 @@ import torch.nn as nn
 # Models
 sys.path.append('/lustrehome/altieri/research/src/models')
 sys.path.append('./models')
-from GWNet.model import GWNet
-import GWNet.util
-#from RGSL.model import RGSL
+from gwnet.model import GWNet
+import gwnet.util as gwnet_util
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
@@ -275,6 +274,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
 
 
                 # vvv Mostly general stuff vvv
+
                 mae.backward()
                 #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
                 optimizer.step()
@@ -456,11 +456,13 @@ class ExperimentRunner():
         return os.path.exists(os.path.join(PATH, 'experiments', folder, 'recap-{}.csv'.format(run_name)))
 
     def run_all(self):
+        logger.info('dentro run_all()')
         if self.run_already:
             logger.critical('This experiment ran already. Results are in the {} folder. Create a new runner for a new experiment.'.format(self.name))
             return
         for dataset in self.datasets:
             for model in self.models:
+                logger.info(f'running for {dataset} and {model}')
                 self._run(model, dataset, '{}-{}'.format(model, dataset))
         self.run_already = True
 
@@ -693,6 +695,8 @@ defaultResultsFolder = f'undefined-{args.model}-{args.dataset}-{datetime.datetim
 if not args.output:
     args.output = defaultResultsFolder
 
+logger.info(defaultResultsFolder)
+
 if args.conf and not args.all:
     runner = ExperimentRunner([args.model + '-' + args.conf], [args.dataset], os.path.join(PATH, 'experiments'), experiment_params, model_params, dataset_params, args.output)
 else:  # Prendo le conf a runtime da model_params.json
@@ -727,5 +731,6 @@ if args.tensorboard:
     runner.enable_tensorboard(os.path.join(PATH, 'log', '{}-{}-{}-summaries'.format(args.model, args.dataset, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))))
 
 if not args.collect_only:
+    logger.info('run_all()')
     runner.run_all()
 runner.collect_preds()

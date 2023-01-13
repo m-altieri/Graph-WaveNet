@@ -1,0 +1,41 @@
+Args: Namespace(model='GraphWaveNet', dataset='wind-nrel', conf=None, all=None, output='GWNet-BS16LR1e-6E50--1', mode=None, wsize=None, starting_node=0, prediction_seqs='test', epochs=1, batch_size=16, learning_rate=1e-06, recas=None, collect_only=None, interpretable=None, skip_finished=None, tensorboard=None, distributed=None, adj=None)
+['.gitignore', 'exp-runner-pytorch.py', 'config', 'README.md', 'utils', '.git', 'GWNetfolder', 'log', 'experiments', 'data']
+undefined-GraphWaveNet-wind-nrel-133701
+run_all()
+dentro run_all()
+running for wind-nrel and GraphWaveNet
+Training starting for model GraphWaveNet and dataset wind-nrel....
+Loading adjacency matrix from ./data/wind-nrel/closeness-wind-nrel.npy...
+Adjacency matrix loaded with shape (5, 5).
+Info: {'models': ['GraphWaveNet'], 'datasets': ['wind-nrel'], 'prediction_dates': 'test', 'override_mode': None, 'override_window': None, 'starting_node': 0, 'time': '1673617021', 'name': 'GWNet-BS16LR1e-6E50--1', 'run_already': False}
+Model params: {'checkpoint': False, 'lr_scheduler': False, 'lrs_monitor': 'loss', 'lrs_factor': 0.1, 'lrs_patience': 5, 'early_stopping': False, 'es_monitor': 'loss', 'es_patience': 5, 'es_restore': False, 'save_attention_weights': False, 'single_node': False, 'batch_size': 16, 'epochs': 1, 'learning_rate': 1e-06, 'optimizer': 'adam', 'loss': 'mae', 'adj_type': 'closeness', 'gcn': 'spektral', 'dynamic_adj': False, 'name': 'GraphWaveNet', 'alias': 'GraphWaveNet'}
+
+Dataset params: {'history_steps': 24, 'prediction_steps': 24, 'stride': 24, 'name': 'wind-nrel', 'nodes': 5, 'features': 8}
+
+Experiment params: {'mode': 'landmark', 'interval': 30, 'allow_partial_batches': True, 'replay': 5, 'show_figures': False, 'save_figures': False, 'buffer': 30, 'test_seqs_source': 'file', 'mini_dataset': False, 'training_set_ratio': 0.8, 'validation_set_ratio': 0.1, 'test_set_ratio': 0.1, 'test_file_suffix': '0.1', 'val_file_suffix': '0.1-val', 'pred_seqs_file_suffix': '0.1'}
+
+Loading data...
+Data loaded with shape (17520, 5, 8).
+Converting timeseries into windows of history steps and prediction steps...
+Conversion complete: 729 sequences produced from 17520 observations.
+Calculating training, validation and test splits (0.8, 0.1, 0.1)...
+Skipped truncation of partial batches.
+Loading and preprocessing complete with shapes:
+	TrainX shape: (729, 24, 5, 8)
+	TrainY shape: (729, 24, 5)
+	ValX shape: (0, 24, 5, 8)
+	ValY shape: (0, 24, 5)
+	TestX shape: (73, 24, 5, 8)
+	TestY shape: (73, 24, 5)
+Single-node model: False
+Starting model construction for model type GraphWaveNet....
+Training starting with:Training X shape: (729, 24, 5, 8)
+	Training Y shape: (729, 24, 5)
+	Validation X shape: (0, 24, 5, 8)
+	Validation Y shape: (0, 24, 5)
+	Test X shape: (73, 24, 5, 8)
+	Test Y shape: (73, 24, 5)
+	Batch size: 16
+	Epochs: 1
+Training for test index: 1/73
+Training on [13, 93]
