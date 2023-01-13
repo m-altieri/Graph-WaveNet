@@ -26,7 +26,7 @@ import util
 # Models
 sys.path.append('/lustrehome/altieri/research/src/models')
 sys.path.append('./models')
-from model import GWNet
+from GWNet.model import GWNet
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
