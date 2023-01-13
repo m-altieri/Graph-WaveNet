@@ -283,8 +283,6 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
 
             logger.info(f'Epochs: {epoch+1}/{epochs}  (MAE: {np.mean(train_loss):.4f})')
 
-        logger.info(f'i: {i}')
-        logger.info(f'testX[i].shape: {testX[i].shape}')
         logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
         pred = model(torch.Tensor(np.expand_dims(np.transpose(testX[i], (2,1,0)), 0)).to(device))
         pred = pred.mean(dim=-1)
