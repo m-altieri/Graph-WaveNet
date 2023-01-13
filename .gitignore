@@ -7,3 +7,4 @@ preds.csv
 *.pkl
 data
 experiments
+log/*
