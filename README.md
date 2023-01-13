@@ -1,12 +1,15 @@
+Create volume:
+```
+sudo docker volume create experiments-vol
+```
+
 Build image:
 ```
-sudo docker build -t gwnet --no-cache .
+sudo docker build -t torch-models-running --no-cache .
 ```
 
 Run detached container with GPU, mounted volume and running experiments with specified conf:
 ```
-sudo docker volume create experiments-vol
-
 sudo docker run -it -d \
 --gpus all --ipc host \
 --name GWNet-BS8LR1e-6E50 \
