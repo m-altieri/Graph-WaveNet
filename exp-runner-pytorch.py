@@ -181,7 +181,7 @@ def create_adj(adj_path=None, sequence=None, show=False, save=False):
 
 
 def build_model(model_name, nodes, features=None, history_steps=None, prediction_steps=None, adj=None, order=4, **kwargs):
-    logger.warning('Starting model construction for model type {}....'.format(model_type))
+    logger.warning('Starting model construction for model type {}....'.format(model_name))
 
     if model_name == 'GraphWaveNet':
         model = GWNet(
