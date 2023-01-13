@@ -203,7 +203,7 @@ def get_optimizer(model_name, lr):
     optimizer = None
 
     if model_name == 'GraphWaveNet':
-        optimizer = torch.optim.Adam(lr=learning_rate, params=model.parameters(), weight_decay=0.0001)
+        optimizer = torch.optim.Adam(lr=lr, params=model.parameters(), weight_decay=0.0001)
     #elif model_name == 'RGSL':
     #    optimizer = None
 
