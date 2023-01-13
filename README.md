@@ -14,7 +14,7 @@ sudo docker run -it -d \
 --gpus all --ipc host \
 --name GraphWaveNet-BS8LR1e-6E50 \
 -v experiments-vol:/home/workdir/experiments \
-torch-images-running 'python3 exp-runner-pytorch.py -d test -o GraphWaveNet-BS8LR1e-6E50 -b 8 -l 1e-6 -e 50 GraphWaveNet wind-nrel'
+torch-models-running 'python3 exp-runner-pytorch.py -d test -o GraphWaveNet-BS8LR1e-6E50 -b 8 -l 1e-6 -e 50 GraphWaveNet wind-nrel'
 ```
 
 Automatically run several detached containers at once with GPU, mounted volume and running experiments with the (same) specified conf:
