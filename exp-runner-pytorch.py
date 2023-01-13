@@ -181,7 +181,7 @@ def create_adj(adj_path=None, sequence=None, show=False, save=False):
 
 
 def build_model(model_name, nodes, features=None, history_steps=None, prediction_steps=None, adj=None, order=4, **kwargs):
-    logger.warning('Starting model construction for model type {}....'.format(model_name))
+    logger.warning('Starting model construction for model type {}....'.format(model_type))
 
     if model_name == 'GraphWaveNet':
         model = GWNet(
@@ -199,7 +199,7 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
     return model
 
 
-def get_optimizer(model_name):
+def get_optimizer(model_name, lr):
     optimizer = None
 
     if model_name == 'GraphWaveNet':
@@ -633,7 +633,7 @@ class ExperimentRunner():
             for n in range(self.starting_node, nodes):
                 logger.warning('Starting training for node ' + str(n))
                 model = build_model(model_p['alias'], nodes, features, history_steps, prediction_steps, adj=adj, order=order)
-                optimizer = get_optimizer(model_p['alias'])
+                optimizer = get_optimizer(model_p['alias'], learning_rate)
                 model.set_node(n)
                 preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
                                           checkpoint, checkpoint_path, lr_scheduler, lrs_monitor, lrs_factor, lrs_patience, early_stopping, es_monitor, es_patience, es_restore, single_node_model, node=n, dynamic_adj=dynamic_adj, summary=self.summaries_path)
@@ -641,7 +641,7 @@ class ExperimentRunner():
                 np.save(f'{preds_path}({n}).npy', preds)
         else:
             model = build_model(model_p['alias'], nodes, features, history_steps, prediction_steps, adj=adj, order=order)
-            optimizer = get_optimizer(model_p['alias'])
+            optimizer = get_optimizer(model_p['alias'], learning_rate)
             preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
                                       checkpoint, checkpoint_path, lr_scheduler, lrs_monitor, lrs_factor, lrs_patience, early_stopping, es_monitor, es_patience, es_restore, single_node_model, dynamic_adj=dynamic_adj, summary=self.summaries_path)
         # Log execution time
