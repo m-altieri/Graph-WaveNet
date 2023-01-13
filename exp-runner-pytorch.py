@@ -1,6 +1,3 @@
-# Arg Parsing
-import argparse
-
 # Math
 import math
 import numpy as np
@@ -8,6 +5,7 @@ import pandas as pd
 import scipy
 
 # Utility
+import argparse
 import time
 import datetime
 from datetime import date, timedelta
@@ -27,6 +25,7 @@ sys.path.append('/lustrehome/altieri/research/src/models')
 sys.path.append('./models')
 from GWNet.model import GWNet
 import GWNet.util
+#from RGSL.model import RGSL
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
@@ -182,19 +181,34 @@ def create_adj(adj_path=None, sequence=None, show=False, save=False):
     return adj
 
 
-def build_model(model_type, nodes, features=None, history_steps=None, prediction_steps=None, adj=None, order=4, **kwargs):
+def build_model(model_name, nodes, features=None, history_steps=None, prediction_steps=None, adj=None, order=4, **kwargs):
     logger.warning('Starting model construction for model type {}....'.format(model_type))
 
-    model = GWNet(
-        torch.device('cuda:0'), 
-        num_nodes=nodes,
-        supports=[torch.Tensor(adj).to('cuda:0')],
-        in_dim=features,
-        out_dim=prediction_steps)
+    if model_name == 'GraphWaveNet':
+        model = GWNet(
+            torch.device('cuda:0'), 
+            num_nodes=nodes,
+            supports=[torch.Tensor(adj).to('cuda:0')],
+            in_dim=features,
+            out_dim=prediction_steps)
+    #elif model_name == 'RGSL':
+    #    model = RGSL(
+    #        )
 
     model.to(torch.device('cuda:0'))
 
     return model
+
+
+def get_optimizer(model_name):
+    optimizer = None
+
+    if model_name == 'GraphWaveNet':
+        optimizer = torch.optim.Adam(lr=learning_rate, params=model.parameters(), weight_decay=0.0001)
+    #elif model_name == 'RGSL':
+    #    optimizer = None
+
+    return optimizer
 
 
 def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj,
@@ -239,10 +253,11 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 optimizer.zero_grad()
 
                 x, y = data
-                #logger.info(f'Dataloader providing x: {x.shape}, y: {y.shape}')
+
+                # ^^^ Mostly general stuff ^^^
 
 
-                # l'input del modello deve essere (B, F, N, T)
+                # vvv  GWNet Stuff  vvv
                 x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
                 #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
 
@@ -250,13 +265,16 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 y = torch.Tensor(y).to(device)
 
                 #input = nn.functional.pad(input, (1,0,0,0))
-                pred = model(x)  # [B,T,N,12]
-                pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12:  [B,T,N]
+                pred = model(x)  # [B,F,N,T] -> [B,T,N,12]
+                pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12: [B,T,N]
                 #output = output.transpose(1,3)
                 #real = torch.unsqueeze(real_val, dim=1)
                 #predict = output  # no scaler
-
                 mae, mape, rmse = GWNet.util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
+                # ^^^ GWNet Stuff ^^^
+
+
+                # vvv Mostly general stuff vvv
                 mae.backward()
                 #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
                 optimizer.step()
@@ -613,7 +631,7 @@ class ExperimentRunner():
             for n in range(self.starting_node, nodes):
                 logger.warning('Starting training for node ' + str(n))
                 model = build_model(model_p['alias'], nodes, features, history_steps, prediction_steps, adj=adj, order=order)
-                optimizer = torch.optim.Adam(lr=learning_rate, params=model.parameters(), weight_decay=0.0001)
+                optimizer = get_optimizer(model_p['alias'])
                 model.set_node(n)
                 preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
                                           checkpoint, checkpoint_path, lr_scheduler, lrs_monitor, lrs_factor, lrs_patience, early_stopping, es_monitor, es_patience, es_restore, single_node_model, node=n, dynamic_adj=dynamic_adj, summary=self.summaries_path)
@@ -621,7 +639,7 @@ class ExperimentRunner():
                 np.save(f'{preds_path}({n}).npy', preds)
         else:
             model = build_model(model_p['alias'], nodes, features, history_steps, prediction_steps, adj=adj, order=order)
-            optimizer = torch.optim.Adam(lr=learning_rate, params=model.parameters(), weight_decay=0.0001)
+            optimizer = get_optimizer(model_p['alias'])
             preds = train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_indexes, mode, optimizer, nodes, features, history_steps, prediction_steps, adj, batch_size, epochs, replay, interval, model_p['alias'],
                                       checkpoint, checkpoint_path, lr_scheduler, lrs_monitor, lrs_factor, lrs_patience, early_stopping, es_monitor, es_patience, es_restore, single_node_model, dynamic_adj=dynamic_adj, summary=self.summaries_path)
         # Log execution time
