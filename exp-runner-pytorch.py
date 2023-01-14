@@ -201,7 +201,10 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
             buildA_true=True, 
             gcn_depth=2, 
             num_nodes=nodes, 
-            device=torch.device('cuda:0'))
+            device=torch.device('cuda:0'),
+            seq_length=history_steps,
+            in_dim=features,
+            out_dim=prediction_steps)
 
     #elif model_name == 'RGSL':
     #    model = RGSL(
