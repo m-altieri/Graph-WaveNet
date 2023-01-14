@@ -26,7 +26,7 @@ sys.path.append('./models')
 from gwnet.model import GWNet
 import gwnet.util as gwnet_util
 
-from layer import *
+from mtgnn.layer import *
 from mtgnn.net import gtnet
 
 
