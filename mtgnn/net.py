@@ -1,5 +1,5 @@
 import sys
-sys.path.append('.')
+sys.path.append('/home/workdir/mtgnn')
 from layer import *
 
 
