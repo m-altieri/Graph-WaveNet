@@ -26,6 +26,9 @@ sys.path.append('./models')
 from gwnet.model import GWNet
 import gwnet.util as gwnet_util
 
+from mtgnn.net import gtnet
+
+
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
 argparser.add_argument('dataset', action='store', help='select the dataset to run the model on')
@@ -190,6 +193,15 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
             supports=[torch.Tensor(adj).to('cuda:0')],
             in_dim=features,
             out_dim=prediction_steps)
+    
+    elif model_name == 'MTGNN':
+        model = gtnet(
+            gcn_true=True, 
+            buildA_true=True, 
+            gcn_depth=2, 
+            num_nodes=nodes, 
+            device=torch.device('cuda:0'))
+
     #elif model_name == 'RGSL':
     #    model = RGSL(
     #        )
@@ -203,7 +215,9 @@ def get_optimizer(model_name, model, lr):
     optimizer = None
 
     if model_name == 'GraphWaveNet':
-        optimizer = torch.optim.Adam(lr=lr, params=model.parameters(), weight_decay=0.0001)
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=lr, weight_decay=0.0001)
+    elif model_name == 'MTGNN':
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=lr, weight_decay=0.0001)
     #elif model_name == 'RGSL':
     #    optimizer = None
 

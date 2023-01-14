@@ -26,6 +26,10 @@
       "alias": "GraphWaveNet"
     },
     {
+      "name": "MTGNN",
+      "alias": "MTGNN"
+    },
+    {
       "name": "ARIMA-AUTO",
       "alias": "ARIMA",
       "single_node": true
