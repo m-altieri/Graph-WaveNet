@@ -201,6 +201,7 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
             buildA_true=True, 
             gcn_depth=2, 
             num_nodes=nodes, 
+            subgraph_size=int(nodes/4)
             device=torch.device('cuda:0'),
             seq_length=history_steps,
             in_dim=features,
