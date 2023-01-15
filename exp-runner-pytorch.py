@@ -244,8 +244,9 @@ def get_optimizer(model_name, model, lr):
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr, weight_decay=0.0001)
     elif model_name == 'MTGNN':
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr, weight_decay=0.0001)
-    #elif model_name == 'RGSL':
-    #    optimizer = None
+    elif model_name == 'RGSL':
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=lr, weight_decay=0, 
+            eps=1.0e-8, amsgrad=False)
 
     return optimizer
 
