@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from scipy.sparse.linalg import eigs
-from RGSLCell import RGSLCell
+from rgsl.model.RGSLCell import RGSLCell
 
 Tensor = torch.Tensor
 
