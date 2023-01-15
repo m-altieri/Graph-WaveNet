@@ -351,7 +351,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         # create a case for that model here,
         # otherwise the else branch will be called
         if model_name == 'RGSL':
-            pred = model(torch.Tensor(x).to(device), _)
+            pred = model(torch.Tensor(x).to(device), None)
         else: # Default behaviour
             pred = model(torch.Tensor(x).to(device))
 
