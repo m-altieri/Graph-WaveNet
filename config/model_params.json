@@ -30,6 +30,10 @@
       "alias": "MTGNN"
     },
     {
+      "name": "RGSL",
+      "alias": "RGSL"
+    },
+    {
       "name": "ARIMA-AUTO",
       "alias": "ARIMA",
       "single_node": true

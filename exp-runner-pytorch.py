@@ -15,6 +15,7 @@ import random
 import csv
 import json
 import utils.math, utils.logging, utils.sequence
+from types import SimpleNamespace as NS
 
 # PyTorch
 import torch
@@ -23,12 +24,15 @@ import torch.nn as nn
 # Models
 sys.path.append('/lustrehome/altieri/research/src/models')
 sys.path.append('./models')
+# GWNet
 from gwnet.model import GWNet
 import gwnet.util as gwnet_util
-
+# MTGNN
 from mtgnn.layer import *
 from mtgnn.net import gtnet
-
+# RGSL
+from rgsl.RGSL import RGSL
+from rgsl.lib.utils import cheb_polynomial
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
@@ -206,6 +210,23 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
             seq_length=history_steps,
             in_dim=features,
             out_dim=prediction_steps)
+
+    elif model_name == 'RGSL':
+        model = RGSL(
+            args=NS(
+                num_nodes=nodes,
+                input_dim=features,
+                rnn_units=64,
+                output_dim=1,
+                horizon=prediction_steps,
+                num_layers=2,
+                default_graph=True,
+                embed_dim=8,
+                cheb_k=2),
+            cheb_polynomials=[
+                torch.Tensor(i).to('cuda:0') for i in cheb_polynomial(adj, 2)
+            ],
+            L_tilde=torch.Tensor(adj).to('cuda:0'))
 
     #elif model_name == 'RGSL':
     #    model = RGSL(
