@@ -10,8 +10,10 @@ class AVWGCN(nn.Module):
         self.cheb_k = cheb_k
         self.cheb_polynomials = cheb_polynomials
         self.L_tilde = L_tilde
-        self.weights_pool = nn.Parameter(torch.FloatTensor(embed_dim, cheb_k, dim_in, dim_out))
-        self.bias_pool = nn.Parameter(torch.FloatTensor(embed_dim, dim_out))
+        #self.weights_pool = nn.Parameter(torch.FloatTensor(embed_dim, cheb_k, dim_in, dim_out))
+        #self.bias_pool = nn.Parameter(torch.FloatTensor(embed_dim, dim_out))
+        self.weights_pool = nn.Parameter(torch.randn(embed_dim, cheb_k, dim_in, dim_out))
+        self.bias_pool = nn.Parameter(torch.randn(embed_dim, dim_out))
         
         # for existing graph convolution
         # self.init_gconv = nn.Conv1d(dim_in, dim_out, kernel_size=5, padding=0)
