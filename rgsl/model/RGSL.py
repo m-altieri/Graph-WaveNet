@@ -102,6 +102,7 @@ class AVWDCRNN(nn.Module):
             inner_states = []
             for t in range(seq_length):
                 state = self.dcrnn_cells[i](current_inputs[:, t, :, :], state, node_embeddings, learned_tilde)
+                print(f'state: {state}')
                 inner_states.append(state)
             output_hidden.append(state)
             current_inputs = torch.stack(inner_states, dim=1)
