@@ -297,43 +297,68 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 # ^^^ Mostly general stuff ^^^
 
 
-                # vvv  GWNet Stuff  vvv
-                x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
-                #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
+                # vvv  Model-specific stuff  vvv
+                if model_name == 'GraphWaveNet' or model_name == 'MTGNN':
+                    x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
+                    #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
 
-                x = torch.Tensor(x).to(device)
-                y = torch.Tensor(y).to(device)
+                    x = torch.Tensor(x).to(device)
+                    y = torch.Tensor(y).to(device)
 
-                #input = nn.functional.pad(input, (1,0,0,0))
-                pred = model(x)  # [B,F,N,T] -> [B,T,N,12]
-                pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12: [B,T,N]
-                #output = output.transpose(1,3)
-                #real = torch.unsqueeze(real_val, dim=1)
-                #predict = output  # no scaler
-                mae, mape, rmse = gwnet_util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
-                # ^^^ GWNet Stuff ^^^
+                    #input = nn.functional.pad(input, (1,0,0,0))
+                    pred = model(x)  # [B,F,N,T] -> [B,T,N,12]
+                    pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12: [B,T,N]
+                    #output = output.transpose(1,3)
+                    #real = torch.unsqueeze(real_val, dim=1)
+                    #predict = output  # no scaler
+                    mae, mape, rmse = gwnet_util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
+                    mae.backward()
+                    train_loss.append(mae.detach().cpu().numpy())
+
+                elif model_name == 'RGSL':
+                    x = torch.Tensor(x).to(device)
+                    y = torch.Tensor(y).to(device)
+                    pred = model(x, y)
+                    mae = torch.nn.SmoothL1Loss().to('cuda:0')(pred, y)
+                    mae.backward()
+                    train_loss.append(mae.detach().cpu().numpy())
+                # ^^^ Model-specific stuff ^^^
 
 
                 # vvv Mostly general stuff vvv
 
-                mae.backward()
                 #torch.nn.utils.clip_grad_norm_(model.parameters(), 5)  # clip = 5
                 optimizer.step()
                 
-                train_loss.append(mae.detach().cpu().numpy())
 
             logger.info(f'Epochs: {epoch+1}/{epochs}  (MAE: {np.mean(train_loss):.4f})')
 
-        logger.info(f'Predicting on {np.expand_dims(np.transpose(testX[i], (2,1,0)), 0).shape}')
-        pred = model(torch.Tensor(np.expand_dims(np.transpose(testX[i], (2,1,0)), 0)).to(device))
-        pred = pred.mean(dim=-1)
+        
+        ############ TEST ############
+        x = testX[i]
+
+        # vvv PRE-TEST: Opportunity to inject model-specific stuff vvv
+        # ------------------------------------------------------------
+        if model_name == 'GraphWaveNet' or model_name == 'MTGNN':
+            x = np.expand_dims(np.transpose(x, (2,1,0)), 0)
+        elif model_name == 'RGSL':
+            pass
+        # ------------------------------------------------------------
+
+        logger.info(f'Predicting on {x.shape}')
+        pred = model(torch.Tensor(x).to(device))
+
+        # vvv POST-TEST: Opportunity to inject model-specific stuff vvv
+        # -------------------------------------------------------------
+        if model_name == 'GraphWaveNet' or model_name == 'MTGNN':
+            pred = pred.mean(dim=-1)
+        elif model_name == 'RGSL':
+            pass
+        # -------------------------------------------------------------
+        ##############################
+        
         logger.info(f'pred #{i} shape: {pred.size()}')
         preds.append(pred.detach().cpu().numpy())
-            
-        #model.fit(, batch_size=batch_size, epochs=epochs, callbacks=callbacks, validation_data=None, shuffle=False)
-        #pred = model.predict(np.expand_dims(testX[i], 0), batch_size=1)
-        #preds.append(pred)
-
         last_index = index
 
     preds = np.squeeze(preds)
