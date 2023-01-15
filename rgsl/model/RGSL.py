@@ -190,14 +190,17 @@ class RGSL(nn.Module):
         else:
             adj, learned_tilde = self.scaled_laplacian(self.node_embeddings, is_eval=True)
 
+        print(f'initial source: {source}')
         init_state = self.encoder.init_hidden(source.shape[0])
+        print(f'init_state: {init_state}')
         output, _ = self.encoder(source, init_state, self.node_embeddings, learned_tilde)      #B, T, N, hidden
+        print(f'after encoder: {output}')
         output = output[:, -1:, :, :]                                   #B, 1, N, hidden
 
         #CNN based predictor
         output = self.end_conv((output))                         #B, T*C, N, 1
+        print(f'after end_conv: {output}')
         output = output.squeeze(-1).reshape(-1, self.horizon, self.output_dim, self.num_node)
         output = output.permute(0, 1, 3, 2)                             #B, T, N, C
 
-        print(f'RGSL output: {output}')
         return output
