@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 import torch.nn as nn
 from scipy.sparse.linalg import eigs
-from model.att import AttLayer
+from rgsl.model.att import AttLayer
 
 class AVWGCN(nn.Module):
     def __init__(self, cheb_polynomials, L_tilde, dim_in, dim_out, cheb_k, embed_dim):
