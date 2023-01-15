@@ -16,17 +16,17 @@ class RGSLCell(nn.Module):
         #state: B, num_nodes, hidden_dim
         state = state.to(x.device)
         input_and_state = torch.cat((x, state), dim=-1)
-        print(f'input_and_state: {input_and_state}')
-        print(f'node_embeddings: {node_embeddings}')
-        print(f'learned_tilde: {learned_tilde}')
+        #print(f'input_and_state: {input_and_state}')
+        #print(f'node_embeddings: {node_embeddings}')
+        #print(f'learned_tilde: {learned_tilde}')
 
         z_r = torch.sigmoid(self.gate(input_and_state, node_embeddings, learned_tilde))
-        print(f'z_r: {z_r}')
+        #print(f'z_r: {z_r}')
         z, r = torch.split(z_r, self.hidden_dim, dim=-1)
         candidate = torch.cat((x, z*state), dim=-1)
-        print(f'candidate: {candidate}')
+        #print(f'candidate: {candidate}')
         hc = torch.tanh(self.update(candidate, node_embeddings, learned_tilde))
-        print(f'hc: {hc}')
+        #print(f'hc: {hc}')
         h = r*state + (1-r)*hc
         return h
 

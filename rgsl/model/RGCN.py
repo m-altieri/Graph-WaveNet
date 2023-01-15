@@ -39,18 +39,18 @@ class AVWGCN(nn.Module):
 
         # 1) convolution with learned graph convolution (implicit knowledge)
         supports = torch.stack(support_set, dim=0)
-        print(f'supports: {supports}')
+        #print(f'supports: {supports}')
         weights = torch.einsum('nd,dkio->nkio', node_embeddings, self.weights_pool)  #N, cheb_k, dim_in, dim_out
-        print(f'self.weights_pool: {self.weights_pool}')
-        print(f'weights: {weights}')
+        #print(f'self.weights_pool: {self.weights_pool}')
+        #print(f'weights: {weights}')
         bias = torch.matmul(node_embeddings, self.bias_pool)
-        print(f'self.bias_pool: {self.bias_pool}')
-        print(f'bias: {bias}')                       #N, dim_out
+        #print(f'self.bias_pool: {self.bias_pool}')
+        #print(f'bias: {bias}')                       #N, dim_out
         x_g = torch.einsum("knm,bmc->bknc", supports, x)      #B, cheb_k, N, dim_in
-        print(f'x_g: {x_g}')
+        #print(f'x_g: {x_g}')
         x_g = x_g.permute(0, 2, 1, 3)  # B, N, cheb_k, dim_in
         x_gconv0 = torch.einsum('bnki,nkio->bno', x_g, weights) + bias     #b, N, dim_out
-        print(f'x_gconv0: {x_gconv0}')
+        #print(f'x_gconv0: {x_gconv0}')
 
         # 2) convolution with existing graph (explicit knowledge)
         graph_supports = torch.stack(self.cheb_polynomials, dim=0)  # [k, n, m]
@@ -58,11 +58,11 @@ class AVWGCN(nn.Module):
         x_g1 = torch.einsum("knm,bmc->bknc", graph_supports, x)
         x_g1 = x_g1.permute(0, 2, 1, 3).reshape(b, n, -1)  # B, N, cheb_k, dim_in
         x_gconv1 = self.gconv(x_g1)
-        print(f'x_gconv1: {x_gconv1}')
+        #print(f'x_gconv1: {x_gconv1}')
 
         # 3) fusion of explit knowledge and implicit knowledge
         x_gconv = self.dy_gate1(F.leaky_relu(x_gconv0).transpose(1,2)) + self.dy_gate2(F.leaky_relu(x_gconv1).transpose(1,2))
-        print(f'x_gconv: {x_gconv}')
+        #print(f'x_gconv: {x_gconv}')
         # x_gconv = F.leaky_relu(x_gconv0) + F.leaky_relu(x_gconv1)
         
         return x_gconv.transpose(1,2)

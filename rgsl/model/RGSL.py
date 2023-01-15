@@ -77,14 +77,14 @@ class AVWDCRNN(nn.Module):
         self.input_dim = dim_in
         self.num_layers = num_layers
         self.dcrnn_cells = nn.ModuleList()
-        print(f'cheb_polynomials shape: {len(cheb_polynomials)}')
-        print(f'cheb_polynomials[0]: {cheb_polynomials[0]}')
-        print(f'L_tilde: {L_tilde}')
-        print(f'node_num: {node_num}')
-        print(f'dim_in: {dim_in}')
-        print(f'dim_out: {dim_out}')
-        print(f'cheb_k: {cheb_k}')
-        print(f'embed_dim: {embed_dim}')
+        #print(f'cheb_polynomials shape: {len(cheb_polynomials)}')
+        #print(f'cheb_polynomials[0]: {cheb_polynomials[0]}')
+        #print(f'L_tilde: {L_tilde}')
+        #print(f'node_num: {node_num}')
+        #print(f'dim_in: {dim_in}')
+        #print(f'dim_out: {dim_out}')
+        #print(f'cheb_k: {cheb_k}')
+        #print(f'embed_dim: {embed_dim}')
 
         self.dcrnn_cells.append(RGSLCell(cheb_polynomials, L_tilde, node_num, dim_in, dim_out, cheb_k, embed_dim))
         for _ in range(1, num_layers):
@@ -102,22 +102,22 @@ class AVWDCRNN(nn.Module):
             inner_states = []
             for t in range(seq_length):
                 state = self.dcrnn_cells[i](current_inputs[:, t, :, :], state, node_embeddings, learned_tilde)
-                print(f'state: {state}')
+                #print(f'state: {state}')
                 inner_states.append(state)
             output_hidden.append(state)
             current_inputs = torch.stack(inner_states, dim=1)
         #current_inputs: the outputs of last layer: (B, T, N, hidden_dim)
         #output_hidden: the last state for each layer: (num_layers, B, N, hidden_dim)
         #last_state: (B, N, hidden_dim)
-        print(f'output_hidden: {output_hidden}')
+        #print(f'output_hidden: {output_hidden}')
         return current_inputs, output_hidden
 
     def init_hidden(self, batch_size):
         init_states = []
-        print(f'self.num_layers: {self.num_layers}')
+        #print(f'self.num_layers: {self.num_layers}')
         for i in range(self.num_layers):
             init_hidden_state = self.dcrnn_cells[i].init_hidden_state(batch_size)
-            print(f'init_hidden_state for {i}: {init_hidden_state}')
+            #print(f'init_hidden_state for {i}: {init_hidden_state}')
             init_states.append(init_hidden_state)
         return torch.stack(init_states, dim=0)      #(num_layers, B, N, hidden_dim)
 
@@ -187,7 +187,7 @@ class RGSL(nn.Module):
             # lambda_max = e.max()
             lambda_max = (L.max() - L.min())
         except Exception as e:
-            print("eig error!!: {}".format(e))
+            #print("eig error!!: {}".format(e))
             lambda_max = 1.0
        
         # pesudo laplacian matrix, lambda_max = eigs(L.cpu().detach().numpy(), k=1, which='LR')[0][0].real
@@ -205,16 +205,16 @@ class RGSL(nn.Module):
         else:
             adj, learned_tilde = self.scaled_laplacian(self.node_embeddings, is_eval=True)
 
-        print(f'initial source: {source}')
+        #print(f'initial source: {source}')
         init_state = self.encoder.init_hidden(source.shape[0])
-        print(f'init_state: {init_state}')
+        #print(f'init_state: {init_state}')
         output, _ = self.encoder(source, init_state, self.node_embeddings, learned_tilde)      #B, T, N, hidden
-        #todoprint(f'after encoder: {output}')
+        #todo#print(f'after encoder: {output}')
         output = output[:, -1:, :, :]                                   #B, 1, N, hidden
 
         #CNN based predictor
         output = self.end_conv((output))                         #B, T*C, N, 1
-        #TODOprint(f'after end_conv: {output}')
+        #TODO#print(f'after end_conv: {output}')
         output = output.squeeze(-1).reshape(-1, self.horizon, self.output_dim, self.num_node)
         output = output.permute(0, 1, 3, 2)                             #B, T, N, C
 
