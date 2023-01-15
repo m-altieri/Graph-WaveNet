@@ -31,7 +31,7 @@ import gwnet.util as gwnet_util
 from mtgnn.layer import *
 from mtgnn.net import gtnet
 # RGSL
-from rgsl.RGSL import RGSL
+from rgsl.model.RGSL import RGSL
 from rgsl.lib.utils import cheb_polynomial
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
