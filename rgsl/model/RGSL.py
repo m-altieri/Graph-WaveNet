@@ -108,6 +108,7 @@ class AVWDCRNN(nn.Module):
         #current_inputs: the outputs of last layer: (B, T, N, hidden_dim)
         #output_hidden: the last state for each layer: (num_layers, B, N, hidden_dim)
         #last_state: (B, N, hidden_dim)
+        print(f'output_hidden: {output_hidden}')
         return current_inputs, output_hidden
 
     def init_hidden(self, batch_size):
