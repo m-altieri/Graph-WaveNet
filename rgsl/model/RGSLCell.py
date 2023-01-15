@@ -17,6 +17,9 @@ class RGSLCell(nn.Module):
         state = state.to(x.device)
         input_and_state = torch.cat((x, state), dim=-1)
         print(f'input_and_state: {input_and_state}')
+        print(f'node_embeddings: {node_embeddings}')
+        print(f'learned_tilde: {learned_tilde}')
+
         z_r = torch.sigmoid(self.gate(input_and_state, node_embeddings, learned_tilde))
         print(f'z_r: {z_r}')
         z, r = torch.split(z_r, self.hidden_dim, dim=-1)
