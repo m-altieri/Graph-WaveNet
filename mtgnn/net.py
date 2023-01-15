@@ -1,4 +1,8 @@
 import sys
+
+# dovrebbe funzionare se tolgo questo e uso
+# from mtgnn.layer import *
+# in pratica devo far finta di stare nel path di exp-runner-pytorch.py
 sys.path.append('/home/workdir/mtgnn')
 from layer import *
 

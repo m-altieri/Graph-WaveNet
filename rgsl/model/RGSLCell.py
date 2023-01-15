@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from model.RGCN import AVWGCN
+from rgsl.model.RGCN import AVWGCN
 
 
 class RGSLCell(nn.Module):
