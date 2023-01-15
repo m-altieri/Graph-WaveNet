@@ -319,7 +319,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                     x = torch.Tensor(x).to(device)
                     y = torch.Tensor(y).to(device)
                     pred = model(x, y)
-                    pred = pred.squeeze(1)
+                    pred = pred.squeeze()
                     logger.info(f'pred shape: {pred.shape}')
                     logger.info(f'y shape: {y.shape}')
 
