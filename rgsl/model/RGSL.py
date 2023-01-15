@@ -76,6 +76,15 @@ class AVWDCRNN(nn.Module):
         self.input_dim = dim_in
         self.num_layers = num_layers
         self.dcrnn_cells = nn.ModuleList()
+        print(f'cheb_polynomials shape: {cheb_polynomials.shape}')
+        print(f'cheb_polynomials[0]: {cheb_polynomials[0]}')
+        print(f'L_tilde: {L_tilde}')
+        print(f'node_num: {node_num}')
+        print(f'dim_in: {dim_in}')
+        print(f'dim_out: {dim_out}')
+        print(f'cheb_k: {cheb_k}')
+        print(f'embed_dim: {embed_dim}')
+
         self.dcrnn_cells.append(RGSLCell(cheb_polynomials, L_tilde, node_num, dim_in, dim_out, cheb_k, embed_dim))
         for _ in range(1, num_layers):
             self.dcrnn_cells.append(RGSLCell(cheb_polynomials, L_tilde, node_num, dim_out, dim_out, cheb_k, embed_dim))
