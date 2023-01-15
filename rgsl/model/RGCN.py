@@ -42,6 +42,7 @@ class AVWGCN(nn.Module):
         x_g = torch.einsum("knm,bmc->bknc", supports, x)      #B, cheb_k, N, dim_in
         x_g = x_g.permute(0, 2, 1, 3)  # B, N, cheb_k, dim_in
         x_gconv0 = torch.einsum('bnki,nkio->bno', x_g, weights) + bias     #b, N, dim_out
+        print(f'x_gconv0: {x_gconv0}')
 
         # 2) convolution with existing graph (explicit knowledge)
         graph_supports = torch.stack(self.cheb_polynomials, dim=0)  # [k, n, m]
@@ -49,9 +50,11 @@ class AVWGCN(nn.Module):
         x_g1 = torch.einsum("knm,bmc->bknc", graph_supports, x)
         x_g1 = x_g1.permute(0, 2, 1, 3).reshape(b, n, -1)  # B, N, cheb_k, dim_in
         x_gconv1 = self.gconv(x_g1)
+        print(f'x_gconv1: {x_gconv1}')
 
         # 3) fusion of explit knowledge and implicit knowledge
         x_gconv = self.dy_gate1(F.leaky_relu(x_gconv0).transpose(1,2)) + self.dy_gate2(F.leaky_relu(x_gconv1).transpose(1,2))
+        print(f'x_gconv: {x_gconv}')
         # x_gconv = F.leaky_relu(x_gconv0) + F.leaky_relu(x_gconv1)
         
         return x_gconv.transpose(1,2)
