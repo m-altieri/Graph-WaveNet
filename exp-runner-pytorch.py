@@ -320,6 +320,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                     y = torch.Tensor(y).to(device)
                     pred = model(x, y)
                     pred = pred.squeeze()
+                    logger.info(f'pred:\n{pred}')
                     #mae = torch.nn.SmoothL1Loss().to('cuda:0')(pred, y)
                     mae = torch.nn.functional.smooth_l1_loss(pred, y)
                     mae.backward()
