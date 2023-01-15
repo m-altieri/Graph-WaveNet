@@ -347,7 +347,13 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         # ------------------------------------------------------------
 
         logger.info(f'Predicting on {x.shape}')
-        pred = model(torch.Tensor(x).to(device))
+        # If you need to customize model testing,
+        # create a case for that model here,
+        # otherwise the else branch will be called
+        if model_name == 'RGSL':
+            pred = model(torch.Tensor(x).to(device), _)
+        else: # Default behaviour
+            pred = model(torch.Tensor(x).to(device))
 
         # vvv POST-TEST: Opportunity to inject model-specific stuff vvv
         # -------------------------------------------------------------
