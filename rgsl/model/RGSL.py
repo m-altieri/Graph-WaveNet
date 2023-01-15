@@ -199,4 +199,5 @@ class RGSL(nn.Module):
         output = output.squeeze(-1).reshape(-1, self.horizon, self.output_dim, self.num_node)
         output = output.permute(0, 1, 3, 2)                             #B, T, N, C
 
+        print(f'RGSL output: {output}')
         return output
