@@ -37,9 +37,11 @@ class AVWGCN(nn.Module):
 
         # 1) convolution with learned graph convolution (implicit knowledge)
         supports = torch.stack(support_set, dim=0)
+        print(f'supports: {supports}')
         weights = torch.einsum('nd,dkio->nkio', node_embeddings, self.weights_pool)  #N, cheb_k, dim_in, dim_out
         bias = torch.matmul(node_embeddings, self.bias_pool)                       #N, dim_out
         x_g = torch.einsum("knm,bmc->bknc", supports, x)      #B, cheb_k, N, dim_in
+        print(f'x_g: {x_g}')
         x_g = x_g.permute(0, 2, 1, 3)  # B, N, cheb_k, dim_in
         x_gconv0 = torch.einsum('bnki,nkio->bno', x_g, weights) + bias     #b, N, dim_out
         print(f'x_gconv0: {x_gconv0}')
