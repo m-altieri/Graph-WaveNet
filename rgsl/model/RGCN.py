@@ -39,7 +39,11 @@ class AVWGCN(nn.Module):
         supports = torch.stack(support_set, dim=0)
         print(f'supports: {supports}')
         weights = torch.einsum('nd,dkio->nkio', node_embeddings, self.weights_pool)  #N, cheb_k, dim_in, dim_out
-        bias = torch.matmul(node_embeddings, self.bias_pool)                       #N, dim_out
+        print(f'self.weights_pool: {self.weights_pool}')
+        print(f'weights: {weights}')
+        bias = torch.matmul(node_embeddings, self.bias_pool)
+        print(f'self.bias_pool: {self.bias_pool}')
+        print(f'bias: {bias}')                       #N, dim_out
         x_g = torch.einsum("knm,bmc->bknc", supports, x)      #B, cheb_k, N, dim_in
         print(f'x_g: {x_g}')
         x_g = x_g.permute(0, 2, 1, 3)  # B, N, cheb_k, dim_in
