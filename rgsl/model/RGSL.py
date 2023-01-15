@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from scipy.sparse.linalg import eigs
 from rgsl.model.RGSLCell import RGSLCell
+import numpy as np
 
 Tensor = torch.Tensor
 
@@ -76,7 +77,7 @@ class AVWDCRNN(nn.Module):
         self.input_dim = dim_in
         self.num_layers = num_layers
         self.dcrnn_cells = nn.ModuleList()
-        print(f'cheb_polynomials shape: {cheb_polynomials.shape}')
+        print(f'cheb_polynomials shape: {np.shape(cheb_polynomials)}')
         print(f'cheb_polynomials[0]: {cheb_polynomials[0]}')
         print(f'L_tilde: {L_tilde}')
         print(f'node_num: {node_num}')
