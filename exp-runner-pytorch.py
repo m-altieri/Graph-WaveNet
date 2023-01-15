@@ -343,7 +343,7 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         if model_name == 'GraphWaveNet' or model_name == 'MTGNN':
             x = np.expand_dims(np.transpose(x, (2,1,0)), 0)
         elif model_name == 'RGSL':
-            pass
+            x = np.expand_dims(x, 0)
         # ------------------------------------------------------------
 
         logger.info(f'Predicting on {x.shape}')
