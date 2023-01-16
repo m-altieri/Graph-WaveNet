@@ -33,6 +33,10 @@ from mtgnn.net import gtnet
 # RGSL
 from rgsl.model.RGSL import RGSL
 from rgsl.lib.utils import cheb_polynomial
+# Triformer
+from triformer.Triformer import Triformer
+# Informer
+from informer.models.model import Informer
 
 argparser = argparse.ArgumentParser(description='Run the experiments.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 argparser.add_argument('model', action='store', help='select the model to run')
@@ -228,9 +232,34 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
             ],
             L_tilde=torch.Tensor(adj).to('cuda:0'))
 
-    #elif model_name == 'RGSL':
-    #    model = RGSL(
-    #        )
+    elif model_name == 'Triformer':
+        model = Triformer(
+            device=torch.device('cuda:0'),
+            num_nodes=nodes,
+            input_dim=features,
+            output_dim=1,  # not used
+            channels=1,
+            dynamic=True,  # non sembra essere usato
+            lag=5,  # sarebbe cuts, non ho idea di cosa mettere
+            horizon=prediction_steps,
+            patch_sizes=[1],  # è una lista, non ho idea di cosa mettere
+            supports=adj,  # not used
+            mem_dim=5)
+
+    elif model_name == 'Informer':
+        model = Informer(
+            enc_in=features, 
+            dec_in=features, 
+            c_out=1, 
+            seq_len=history_steps, 
+            label_len=48,  # ?? 
+            out_len=prediction_steps, 
+            e_layers=2, 
+            d_layers=1, 
+            d_ff=2048, 
+            dropout=0.05, 
+            embed='timeF', 
+            device=torch.device('cuda:0'))
 
     model.to(torch.device('cuda:0'))
 

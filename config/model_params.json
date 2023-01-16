@@ -34,6 +34,14 @@
       "alias": "RGSL"
     },
     {
+      "name": "Triformer",
+      "alias": "Triformer"
+    },
+    {
+      "name": "Informer",
+      "alias": "Informer"
+    },
+    {
       "name": "ARIMA-AUTO",
       "alias": "ARIMA",
       "single_node": true
