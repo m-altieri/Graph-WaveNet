@@ -279,7 +279,7 @@ def get_optimizer(model_name, model, lr):
             eps=1.0e-8, amsgrad=False)
     elif model_name == 'Informer':
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr)
-        
+
     else:  # se nel repo del modello non sta scritto
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr)
     return optimizer
@@ -354,9 +354,16 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                     y = torch.Tensor(y).to(device)
                     pred = model(x, y)
                     pred = pred.squeeze()
-                    #todologger.info(f'pred:\n{pred}')
-                    #mae = torch.nn.SmoothL1Loss().to('cuda:0')(pred, y)
                     mae = torch.nn.functional.smooth_l1_loss(pred, y)
+                    mae.backward()
+                    train_loss.append(mae.detach().cpu().numpy())
+
+                elif model_name == 'Triformer':
+                    x = torch.Tensor(x).to(device)
+                    y = torch.Tensor(y).to(device)
+                    pred = model(x, None, None, None)
+                    logger.info(f'pred:\n{pred}')
+                    mae = torch.nn.functional.l1_loss(pred, y)
                     mae.backward()
                     train_loss.append(mae.detach().cpu().numpy())
                 # ^^^ Model-specific stuff ^^^
@@ -380,6 +387,8 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
             x = np.expand_dims(np.transpose(x, (2,1,0)), 0)
         elif model_name == 'RGSL':
             x = np.expand_dims(x, 0)
+        elif model_name == 'Triformer':
+            x = np.expand_dims(x, 0)
         # ------------------------------------------------------------
 
         logger.info(f'Predicting on {x.shape}')
@@ -388,6 +397,8 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         # otherwise the else branch will be called
         if model_name == 'RGSL':
             pred = model(torch.Tensor(x).to(device), None)
+        elif model_name == 'Triformer':
+            pred = model(torch.Tensor(x).to(device), None, None, None)
         else: # Default behaviour
             pred = model(torch.Tensor(x).to(device))
 
@@ -395,8 +406,6 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
         # -------------------------------------------------------------
         if model_name == 'GraphWaveNet' or model_name == 'MTGNN':
             pred = pred.mean(dim=-1)
-        elif model_name == 'RGSL':
-            pass
         # -------------------------------------------------------------
         ##############################
         
