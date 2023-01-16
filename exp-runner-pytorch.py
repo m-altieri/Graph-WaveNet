@@ -236,9 +236,9 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
         model = Triformer(
             device=torch.device('cuda:0'),
             num_nodes=nodes,
-            input_dim=features*8,
+            input_dim=features,
             output_dim=1,  # not used
-            channels=1,
+            channels=8,
             dynamic=True,  # non sembra essere usato
             lag=5,  # sarebbe cuts, non ho idea di cosa mettere, 
                     # fa tipo dei cuts lungo l'asse dei timestep e ne prende lag alla volta
