@@ -277,7 +277,11 @@ def get_optimizer(model_name, model, lr):
     elif model_name == 'RGSL':
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr, weight_decay=0, 
             eps=1.0e-8, amsgrad=False)
-
+    elif model_name == 'Informer':
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=lr)
+        
+    else:  # se nel repo del modello non sta scritto
+        optimizer = torch.optim.Adam(params=model.parameters(), lr=lr)
     return optimizer
 
 
