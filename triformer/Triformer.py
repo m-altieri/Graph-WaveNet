@@ -46,7 +46,8 @@ class Triformer(nn.Module):
         if self.notprinted:
             self.notprinted = False
             print(batch_x.shape)
-        x = self.start_fc(batch_x.unsqueeze(-1))
+        #x = self.start_fc(batch_x.unsqueeze(-1))
+        x = self.start_fc(x)
         batch_size = x.size(0)
         skip = 0
 
