@@ -335,16 +335,10 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                 if model_name == 'GraphWaveNet' or model_name == 'MTGNN':
                     x = np.transpose(x, (0,3,2,1))  # [B,T,N,F] -> [B,F,N,T]
                     #y = np.transpose(y, (0,2,1))    # [B,T,N]   -> [B,N,T]
-
                     x = torch.Tensor(x).to(device)
                     y = torch.Tensor(y).to(device)
-
-                    #input = nn.functional.pad(input, (1,0,0,0))
                     pred = model(x)  # [B,F,N,T] -> [B,T,N,12]
                     pred = pred.mean(dim=-1)  # comprimo l'ultima dimensione da 12: [B,T,N]
-                    #output = output.transpose(1,3)
-                    #real = torch.unsqueeze(real_val, dim=1)
-                    #predict = output  # no scaler
                     mae, mape, rmse = gwnet_util.calc_metrics(pred.squeeze(1), y, null_val=0.0)
                     mae.backward()
                     train_loss.append(mae.detach().cpu().numpy())
@@ -366,6 +360,9 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                     mae = torch.nn.functional.l1_loss(pred, y)
                     mae.backward()
                     train_loss.append(mae.detach().cpu().numpy())
+
+                elif model_name == 'Informer':
+                    pass
                 # ^^^ Model-specific stuff ^^^
 
 
