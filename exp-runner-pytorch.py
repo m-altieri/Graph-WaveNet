@@ -251,7 +251,7 @@ def build_model(model_name, nodes, features=None, history_steps=None, prediction
         model = Informer(
             enc_in=features, 
             dec_in=features, 
-            c_out=1, 
+            c_out=features, 
             seq_len=history_steps, 
             label_len=48,  # ?? 
             out_len=prediction_steps, 
