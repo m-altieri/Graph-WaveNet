@@ -356,13 +356,17 @@ def train_and_predict(model, trainX, trainY, valX, valY, testX, testY, test_inde
                     x = torch.Tensor(x).to(device)
                     y = torch.Tensor(y).to(device)
                     pred = model(x, None, None, None)
-                    #todologger.info(f'pred:\n{pred}')
                     mae = torch.nn.functional.l1_loss(pred, y)
                     mae.backward()
                     train_loss.append(mae.detach().cpu().numpy())
 
                 elif model_name == 'Informer':
-                    pass
+                    x = torch.Tensor(x).to(device)
+                    y = torch.Tensor(y).to(device)
+                    pred = model(x, None, None, None)
+                    mae = torch.nn.functional.l1_loss(pred, y)
+                    mae.backward()
+                    train_loss.append(mae.detach().cpu().numpy())
                 # ^^^ Model-specific stuff ^^^
 
 
