@@ -488,7 +488,7 @@ def build_model(
             dilation_exp=1,
             gcn_depth=2,
             device="cuda:0",
-            fc_dim=95744,
+            fc_dim=16,  # era 95744,
             layer_norm_affline=False,
         )
 
