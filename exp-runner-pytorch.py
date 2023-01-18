@@ -621,9 +621,11 @@ def train_and_predict(
                 elif model_name == "Informer":
                     x = torch.Tensor(x).to(device)
                     y = torch.Tensor(y).to(device)
-                    dec_inp = torch.zeros(
-                        [y.shape[0], prediction_steps, y.shape[-1]]
-                    ).float()
+                    dec_inp = (
+                        torch.zeros([y.shape[0], prediction_steps, y.shape[-1]])
+                        .float()
+                        .to(device)
+                    )
                     dec_inp = (
                         torch.cat([y[:, : prediction_steps // 2, :], dec_inp], dim=1)
                         .float()
