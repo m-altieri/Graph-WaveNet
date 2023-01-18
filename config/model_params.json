@@ -42,6 +42,10 @@
       "alias": "Informer"
     },
     {
+      "name": "ESG",
+      "alias": "ESG"
+    },
+    {
       "name": "ARIMA-AUTO",
       "alias": "ARIMA",
       "single_node": true

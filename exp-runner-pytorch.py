@@ -42,6 +42,9 @@ from triformer.Triformer import Triformer
 # Informer
 from informer.models.model import Informer
 
+# ESG
+from esg.model.esg import ESG
+
 argparser = argparse.ArgumentParser(
     description="Run the experiments.",
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -450,7 +453,7 @@ def build_model(
             mem_dim=5,
         )
 
-    elif model_name == "Informer":
+    elif model_name == "Informer":  # mi sa che è singolo-nodo
         model = Informer(
             enc_in=features,
             dec_in=features,
@@ -464,6 +467,29 @@ def build_model(
             dropout=0.05,
             embed="timeF",
             device=torch.device("cuda:0"),
+        )
+
+    elif model_name == "ESG":
+        model = ESG(
+            dy_embedding_dim=20,
+            dy_interval=[1, 1, 1],
+            num_nodes=nodes,
+            seq_in_len=history_steps,
+            seq_out_len=prediction_steps,
+            in_dim=features,
+            out_dim=1,
+            n_blocks=1,
+            n_layers=3,
+            conv_channels=32,
+            residual_channels=32,
+            skip_channels=64,
+            end_channels=128,
+            kernel_set=[2, 6],
+            dilation_exp=1,
+            gcn_depth=2,
+            device="cuda:0",
+            fc_dim=95744,
+            layer_norm_affline=False,
         )
 
     model.to(torch.device("cuda:0"))
@@ -488,7 +514,10 @@ def get_optimizer(model_name, model, lr):
         )
     elif model_name == "Informer":
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr)
-
+    elif model_name == "ESG":
+        optimizer = torch.optim.Adam(
+            params=model.parameters(), lr=lr, weight_decay=0.0001
+        )
     else:  # se nel repo del modello non sta scritto
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr)
     return optimizer
@@ -636,6 +665,20 @@ def train_and_predict(
                     # pred = model(x, None, None, None)
                     logger.info(f"pred: {pred}")
                     logger.info(f"pred shape: {pred.shape}")
+                    mae = torch.nn.functional.l1_loss(pred, y)
+                    mae.backward()
+                    train_loss.append(mae.detach().cpu().numpy())
+
+                elif model_name == "ESG":
+                    # :param input: [B, in_dim, N, n_hist]
+                    # :return: [B, n_pred, N, out_dim]
+                    model.static_feat = x
+                    x = torch.Tensor(x).to(device).transpose((1, 3))
+                    y = torch.Tensor(y).to(device)
+                    pred = model(x)
+                    logger.info(f"pred: {pred}")
+                    logger.info(f"pred shape: {pred.shape}")
+                    pred = pred.squeeze(-1)
                     mae = torch.nn.functional.l1_loss(pred, y)
                     mae.backward()
                     train_loss.append(mae.detach().cpu().numpy())
