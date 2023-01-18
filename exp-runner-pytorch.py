@@ -672,7 +672,9 @@ def train_and_predict(
                 elif model_name == "ESG":
                     # :param input: [B, in_dim, N, n_hist]
                     # :return: [B, n_pred, N, out_dim]
-                    model.static_feat = x
+                    model.static_feat = np.mean(
+                        x[..., 0], axis=0
+                    )  # gli do la media della produzione lungo le seq del batch
                     x = torch.Tensor(x).to(device).transpose(1, 3)
                     y = torch.Tensor(y).to(device)
                     pred = model(x)
