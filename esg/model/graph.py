@@ -19,14 +19,14 @@ class NodeFeaExtractor(nn.Module):
 
     def forward(self, node_fea):
         t, n = node_fea.shape
-        x = node_fea.transpose(1, 0).reshape(n, 1, -1)
-        x = self.conv1(x)
+        x = node_fea.transpose(1, 0).reshape(n, 1, -1)  # [N,1,T]
+        x = self.conv1(x)  # [N,8,T]
         x = torch.relu(x)
         x = self.bn1(x)
-        x = self.conv2(x)
+        x = self.conv2(x)  # [N,16,T]
         x = torch.relu(x)
         x = self.bn2(x)
-        x = x.view(n, -1)
+        x = x.view(n, -1)  # [N, 16*T]
         x = self.fc(x)
         x = torch.relu(x)
         x = self.bn3(x)
