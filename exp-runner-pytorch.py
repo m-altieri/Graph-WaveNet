@@ -674,9 +674,8 @@ def train_and_predict(
                     # :return: [B, n_pred, N, out_dim]
                     logger.info(f"x: {x.numpy()}")
                     logger.info(f"x shape: {x.numpy().shape}")
-                    model.static_feat = np.mean(
-                        x.numpy()[..., 0], axis=0
-                    )  # gli do la media della produzione lungo le seq del batch
+                    model.static_feat = x[..., 0].mean(dim=0)
+                    # gli do la media della produzione lungo le seq del batch
                     x = torch.Tensor(x).to(device).transpose(1, 3)
                     y = torch.Tensor(y).to(device)
                     pred = model(x)
