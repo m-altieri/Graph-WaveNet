@@ -474,7 +474,7 @@ def build_model(
             dy_embedding_dim=20,
             dy_interval=[1, 1, 1],
             num_nodes=nodes,
-            seq_len=history_steps,
+            seq_length=history_steps,
             pred_len=prediction_steps,
             in_dim=features,
             out_dim=1,
