@@ -647,7 +647,7 @@ def train_and_predict(
                     mae.backward()
                     train_loss.append(mae.detach().cpu().numpy())
 
-                elif model_name == "Informer":
+                elif model_name == "Informer":  # non funziona
                     x = torch.Tensor(x).to(device)
                     x = x.reshape((x.shape[0], x.shape[1], x.shape[2] * x.shape[3]))
                     y = torch.Tensor(y).to(device)
@@ -670,16 +670,14 @@ def train_and_predict(
                     train_loss.append(mae.detach().cpu().numpy())
 
                 elif model_name == "ESG":
-                    # :param input: [B, in_dim, N, n_hist]
-                    # :return: [B, n_pred, N, out_dim]
+                    # wants:   [B, in_dim, N, n_hist]
+                    # returns: [B, n_pred, N, out_dim]
 
                     # gli do la media della produzione lungo le seq del batch
                     model.static_feat = x[..., 0].mean(dim=0).to(device)
                     x = torch.Tensor(x).to(device).transpose(1, 3)
                     y = torch.Tensor(y).to(device)
                     pred = model(x)
-                    # logger.info(f"pred: {pred}")
-                    # logger.info(f"pred shape: {pred.shape}")
                     pred = pred.squeeze(-1)
                     mae = torch.nn.functional.l1_loss(pred, y)
                     mae.backward()
