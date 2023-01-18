@@ -620,6 +620,7 @@ def train_and_predict(
 
                 elif model_name == "Informer":
                     x = torch.Tensor(x).to(device)
+                    x = x.reshape((x.shape[0], x.shape[1], x.shape[2] * x.shape[3]))
                     y = torch.Tensor(y).to(device)
                     dec_inp = (
                         torch.zeros([y.shape[0], prediction_steps, y.shape[-1]])
