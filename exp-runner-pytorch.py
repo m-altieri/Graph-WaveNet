@@ -673,7 +673,7 @@ def train_and_predict(
                     # :param input: [B, in_dim, N, n_hist]
                     # :return: [B, n_pred, N, out_dim]
                     model.static_feat = x
-                    x = torch.Tensor(x).to(device).transpose((1, 3))
+                    x = torch.Tensor(x).to(device).transpose(1, 3)
                     y = torch.Tensor(y).to(device)
                     pred = model(x)
                     logger.info(f"pred: {pred}")
