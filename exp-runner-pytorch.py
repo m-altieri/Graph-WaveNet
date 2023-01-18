@@ -672,15 +672,15 @@ def train_and_predict(
                 elif model_name == "ESG":
                     # :param input: [B, in_dim, N, n_hist]
                     # :return: [B, n_pred, N, out_dim]
-                    logger.info(f"x: {x}")
-                    logger.info(f"x shape: {x.shape}")
+                    # logger.info(f"x: {x}")
+                    # logger.info(f"x shape: {x.shape}")
                     model.static_feat = x[..., 0].mean(dim=0).to(device)
                     # gli do la media della produzione lungo le seq del batch
                     x = torch.Tensor(x).to(device).transpose(1, 3)
                     y = torch.Tensor(y).to(device)
                     pred = model(x)
-                    logger.info(f"pred: {pred}")
-                    logger.info(f"pred shape: {pred.shape}")
+                    # logger.info(f"pred: {pred}")
+                    # logger.info(f"pred shape: {pred.shape}")
                     pred = pred.squeeze(-1)
                     mae = torch.nn.functional.l1_loss(pred, y)
                     mae.backward()
