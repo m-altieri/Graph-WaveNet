@@ -672,10 +672,9 @@ def train_and_predict(
                 elif model_name == "ESG":
                     # :param input: [B, in_dim, N, n_hist]
                     # :return: [B, n_pred, N, out_dim]
-                    # logger.info(f"x: {x}")
-                    # logger.info(f"x shape: {x.shape}")
-                    model.static_feat = x[..., 0].mean(dim=0).to(device)
+
                     # gli do la media della produzione lungo le seq del batch
+                    model.static_feat = x[..., 0].mean(dim=0).to(device)
                     x = torch.Tensor(x).to(device).transpose(1, 3)
                     y = torch.Tensor(y).to(device)
                     pred = model(x)
@@ -706,6 +705,8 @@ def train_and_predict(
             x = np.expand_dims(x, 0)
         elif model_name == "Triformer":
             x = np.expand_dims(x, 0)
+        elif model_name == "ESG":
+            x = np.expand_dims(np.transpose(x, (2, 1, 0)), 0)
         # ------------------------------------------------------------
 
         logger.info(f"Predicting on {x.shape}")
