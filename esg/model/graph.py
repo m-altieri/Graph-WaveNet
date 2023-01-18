@@ -6,8 +6,12 @@ import torch.nn as nn
 class NodeFeaExtractor(nn.Module):
     def __init__(self, hidden_size_st, fc_dim):
         super(NodeFeaExtractor, self).__init__()
-        self.conv1 = torch.nn.Conv1d(1, 8, 4, stride=1)  # era (1,8,10)
-        self.conv2 = torch.nn.Conv1d(8, 16, 4, stride=1)  # era (8,16,10)
+        self.conv1 = torch.nn.Conv1d(
+            1, 8, 4, padding="same", stride=1
+        )  # era (1,8,10) e non c'era padding same
+        self.conv2 = torch.nn.Conv1d(
+            8, 16, 4, padding="same", stride=1
+        )  # era (8,16,10) e non c'era padding same
         self.bn1 = torch.nn.BatchNorm1d(8)
         self.bn2 = torch.nn.BatchNorm1d(16)
         self.bn3 = torch.nn.BatchNorm1d(hidden_size_st)
