@@ -20,6 +20,7 @@ from types import SimpleNamespace as NS
 # PyTorch
 import torch
 import torch.nn as nn
+import torchinfo
 
 # Models
 sys.path.append("/lustrehome/altieri/research/src/models")
@@ -707,6 +708,8 @@ def train_and_predict(
             x = np.expand_dims(np.transpose(x, (2, 1, 0)), 0)
         # ------------------------------------------------------------
 
+        logger.warning(x.shape)
+        logger.warning(torchinfo.summary(model, input_size=x.shape))
         logger.info(f"Predicting on {x.shape}")
         # If you need to customize model testing,
         # create a case for that model here,
@@ -1173,7 +1176,6 @@ class ExperimentRunner:
 
         # Training and predicting
         if single_node_model:  # i single node model forse li devo togliere
-
             try:  # Ricarica le predizioni già fatte
                 saved_preds = [
                     np.load(f"{preds_path}({n}).npy") for n in range(self.starting_node)
