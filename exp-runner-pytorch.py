@@ -709,8 +709,11 @@ def train_and_predict(
         # ------------------------------------------------------------
 
         logger.warning(x.shape)
+        logger.info(f"DEBUG on {x.shape}")
         logger.warning(torchinfo.summary(model, input_size=x.shape))
+        logger.warning(str(torchinfo.summary(model, input_size=x.shape)))
         logger.info(f"Predicting on {x.shape}")
+        logger.info(f"DEBUG on {x.shape}")
         # If you need to customize model testing,
         # create a case for that model here,
         # otherwise the else branch will be called
