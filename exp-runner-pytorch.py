@@ -708,7 +708,7 @@ def train_and_predict(
             x = np.expand_dims(np.transpose(x, (2, 1, 0)), 0)
         # ------------------------------------------------------------
 
-        logger.warning(str(torchinfo.summary(model, input_size=x.shape)))
+        logger.warning("# Parameters:", sum(p.numel() for p in model.parameters()))
         logger.info(f"Predicting on {x.shape}")
         # If you need to customize model testing,
         # create a case for that model here,
