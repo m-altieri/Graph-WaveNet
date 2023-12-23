@@ -80,6 +80,12 @@ class Evolving_GConv(nn.Module):
             print(dy_graph.shape)
             logbook.register("x_i", x_i)
             logbook.register("dy_graph", dy_graph)
+            logbook.register(
+                "I",
+                utils.autocorrelation.morans_I_numpy(
+                    torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2), dy_graph
+                ),
+            )
 
         x_out = torch.cat(x_out, dim=-1)  # [B, c_out, N, T]
         return x_out
@@ -355,6 +361,6 @@ class ESG(nn.Module):
         path = f"../spatial_ac/ESG-{self.num_nodes}"
         if not os.path.exists(path):
             os.makedirs(path)
-        self.logbook.save_plot(path, names=["test"])
+        self.logbook.save_plot(path, names=["I"])
 
         return x
