@@ -74,15 +74,8 @@ class Evolving_GConv(nn.Module):
             dy_graph, states_dy = self.scale_spc_EGL(input_state_i, states_dy)
             x_out.append(self.gconv(x_i, dy_graph))
 
-            print(x_i)
-            print(dy_graph)
-            print(states_dy)
-            print(x_i.shape)
             print(dy_graph.shape)
             print(states_dy.shape)
-            logbook.register("x_i", x_i)
-            logbook.register("dy_graph", dy_graph)
-            logbook.register("states_dy", dy_graph)
 
             logbook.register(
                 "I",
@@ -275,6 +268,11 @@ class ESG(nn.Module):
             )
         else:
             self.receptive_field = n_blocks * n_layers * (kernel_size - 1) + 1
+
+        print(f"n blocks: {self.n_blocks}")
+        print(f"receptive field: {self.receptive_field}")
+        print(f"seq length: {self.seq_length}")
+
         self.total_t_len = max(self.receptive_field, self.seq_length)
 
         self.start_conv = nn.Conv2d(in_dim, residual_channels, kernel_size=(1, 1))
@@ -364,7 +362,7 @@ class ESG(nn.Module):
             -1, -2
         )  # [B, pred_len, N, out_dim]
 
-        path = f"../spatial_ac/ESG-{self.num_nodes}"
+        path = f"/home/workdir/experiments/spatial_ac/ESG-{self.num_nodes}"
         if not os.path.exists(path):
             os.makedirs(path)
         self.logbook.save_plot(path, names=["I"])
