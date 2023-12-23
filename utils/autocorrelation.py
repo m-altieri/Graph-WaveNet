@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+
 # import tensorflow as tf
 import matplotlib.pyplot as plt
 
@@ -93,6 +94,7 @@ def morans_I(x, adj):
     return I
 
 
+# qui assumo che adj sia (B,N,N), perchè cambia per ogni timestep/esempio
 def morans_I_numpy(x, adj):
     x_h = np.copy(x)  # (B,N,F)
     b, n, f = x_h.shape  # x: (B,N,F)
@@ -101,28 +103,25 @@ def morans_I_numpy(x, adj):
     numerator = 0.0
     denominator = 0.0
 
-    normalizer = np.astype(n / np.sum(adj), np.float32)  # ()
+    normalizer = (n / np.sum(adj, axis=[1, 2])).astype(np.float32)  # ()
     for node_i in range(n):
-        denominator += np.astype(
-            (x_h[:, node_i] - x_mean) ** 2, np.float32
+        denominator += ((x_h[:, node_i] - x_mean) ** 2).astype(
+            np.float32
         )  # (B,F), (B,F) -> (B,F)
 
         for node_j in range(n):
             # (), ((B,F), (B,F)) -> (B,F)
             numerator += np.multiply(
-                np.astype(adj[node_i, node_j], np.float32),
-                np.astype(
-                    np.multiply(
-                        np.astype((x_h[:, node_i] - x_mean), np.float32),
-                        np.astype((x_h[:, node_j] - x_mean), np.float32),
-                    ),
-                    np.float32,
-                ),
+                adj[:, node_i, node_j].astype(np.float32),
+                np.multiply(
+                    (x_h[:, node_i] - x_mean).astype(np.float32),
+                    (x_h[:, node_j] - x_mean).astype(np.float32),
+                ).astype(np.float32),
             )
 
     I = np.multiply(
         normalizer,
-        np.astype(np.divide(numerator, denominator + epsilon), np.float32),
+        np.divide(numerator, denominator + epsilon).astype(np.float32),
     )
 
     I = np.mean(I)
