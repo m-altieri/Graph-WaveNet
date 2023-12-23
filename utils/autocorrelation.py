@@ -96,6 +96,8 @@ def morans_I(x, adj):
 
 # qui assumo che adj sia (B,N,N), perchè cambia per ogni timestep/esempio
 def morans_I_numpy(x, adj):
+    print(f"morans_I_numpy() called with shapes: x: {x.shape}, adj: {adj.shape}")
+
     x_h = np.copy(x)  # (B,N,F)
     b, n, f = x_h.shape  # x: (B,N,F)
     epsilon = 1e-3
@@ -103,7 +105,7 @@ def morans_I_numpy(x, adj):
     numerator = 0.0
     denominator = 0.0
 
-    normalizer = (n / np.sum(adj, axis=[1, 2])).astype(np.float32)  # ()
+    normalizer = (n / np.sum(adj, axis=(1, 2))).astype(np.float32)  # ()
     for node_i in range(n):
         denominator += ((x_h[:, node_i] - x_mean) ** 2).astype(
             np.float32
