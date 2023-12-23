@@ -83,7 +83,11 @@ class Evolving_GConv(nn.Module):
             logbook.register(
                 "I",
                 utils.autocorrelation.morans_I_numpy(
-                    torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2), dy_graph
+                    torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
+                    .cpu()
+                    .detach()
+                    .numpy(),
+                    dy_graph.cpu().detach().numpy(),
                 ),
             )
 
