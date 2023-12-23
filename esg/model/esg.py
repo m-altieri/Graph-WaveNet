@@ -60,6 +60,7 @@ class Evolving_GConv(nn.Module):
         )
 
     def forward(self, x, st_node_fea, logbook):
+        print("evolving gconv called")
         b, _, n, t = x.shape
         dy_node_fea = self.linear_s2d(st_node_fea).unsqueeze(0)
         states_dy = dy_node_fea.repeat(b, 1, 1)  # [B, N, C]
@@ -135,6 +136,7 @@ class Extractor(nn.Module):
         )
 
     def forward(self, x: Tensor, st_node_fea: Tensor, logbook):
+        print("extractor called")
         residual = x  # [B, F, N, T]
         # dilated convolution
         x = self.t_conv(x)
@@ -213,6 +215,7 @@ class Block(nn.ModuleList):
             dilation_factor *= dilation_exp
 
     def forward(self, x: Tensor, st_node_fea: Tensor, skip_list, logbook):
+        print("block called")
         flag = 0
         for layer in self:
             flag += 1
@@ -330,6 +333,7 @@ class ESG(nn.Module):
         """
 
         self.logbook.new()
+        print("new logbook")
 
         # self.logger.critical(f"Moran's I @ {'input':<8} : {I:.3f}")
 
@@ -366,5 +370,6 @@ class ESG(nn.Module):
         if not os.path.exists(path):
             os.makedirs(path)
         self.logbook.save_plot(path, names=["I"])
+        print("logbook saved")
 
         return x
