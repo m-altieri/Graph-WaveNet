@@ -76,17 +76,19 @@ class Evolving_GConv(nn.Module):
 
             print(x_i)
             print(dy_graph)
+            print(states_dy)
             print(x_i.shape)
             print(dy_graph.shape)
+            print(states_dy.shape)
             logbook.register("x_i", x_i)
             logbook.register("dy_graph", dy_graph)
+            logbook.register("states_dy", dy_graph)
+
             logbook.register(
                 "I",
                 utils.autocorrelation.morans_I_numpy(
-                    torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
-                    .cpu()
-                    .detach()
-                    .numpy(),
+                    # torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
+                    states_dy.cpu().detach().numpy(),
                     dy_graph.cpu().detach().numpy(),
                 ),
             )
