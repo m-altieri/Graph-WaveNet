@@ -114,7 +114,9 @@ def morans_I_numpy(x, adj):
         for node_j in range(n):
             # (), ((B,F), (B,F)) -> (B,F)
             numerator += np.multiply(
-                adj[:, node_i, node_j].astype(np.float32),
+                np.expand_dims(
+                    adj[:, node_i, node_j].astype(np.float32), axis=-1
+                ),  # broadcasting
                 np.multiply(
                     (x_h[:, node_i] - x_mean).astype(np.float32),
                     (x_h[:, node_j] - x_mean).astype(np.float32),
