@@ -124,7 +124,7 @@ def morans_I_numpy(x, adj):
             )
 
     I = np.multiply(
-        normalizer,
+        np.expand_dims(normalizer, axis=-1),  # broadcasting
         np.divide(numerator, denominator + epsilon).astype(np.float32),
     )
 
