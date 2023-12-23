@@ -59,7 +59,7 @@ class Evolving_GConv(nn.Module):
             conv_channels, residual_channels, gcn_depth, dropout, propalpha
         )
 
-    def forward(self, x, st_node_fea):
+    def forward(self, x, st_node_fea, logbook):
         b, _, n, t = x.shape
         dy_node_fea = self.linear_s2d(st_node_fea).unsqueeze(0)
         states_dy = dy_node_fea.repeat(b, 1, 1)  # [B, N, C]
@@ -73,6 +73,13 @@ class Evolving_GConv(nn.Module):
 
             dy_graph, states_dy = self.scale_spc_EGL(input_state_i, states_dy)
             x_out.append(self.gconv(x_i, dy_graph))
+
+            print(x_i)
+            print(dy_graph)
+            print(x_i.shape)
+            print(dy_graph.shape)
+            logbook.register("x_i", x_i)
+            logbook.register("dy_graph", dy_graph)
 
         x_out = torch.cat(x_out, dim=-1)  # [B, c_out, N, T]
         return x_out
@@ -122,14 +129,14 @@ class Extractor(nn.Module):
             (residual_channels, num_nodes, t_len), elementwise_affine=layer_norm_affline
         )
 
-    def forward(self, x: Tensor, st_node_fea: Tensor):
+    def forward(self, x: Tensor, st_node_fea: Tensor, logbook):
         residual = x  # [B, F, N, T]
         # dilated convolution
         x = self.t_conv(x)
         # parametrized skip connection
         skip = self.skip_conv(x)
         # graph convolution
-        x = self.s_conv(x, st_node_fea)
+        x = self.s_conv(x, st_node_fea, logbook)
         # residual connection
         x = x + residual[:, :, :, -x.size(3) :]
         x = self.norm(x)
@@ -200,11 +207,11 @@ class Block(nn.ModuleList):
             )
             dilation_factor *= dilation_exp
 
-    def forward(self, x: Tensor, st_node_fea: Tensor, skip_list):
+    def forward(self, x: Tensor, st_node_fea: Tensor, skip_list, logbook):
         flag = 0
         for layer in self:
             flag += 1
-            x, skip = layer(x, st_node_fea)
+            x, skip = layer(x, st_node_fea, logbook)
             skip_list.append(skip)
         return x, skip_list
 
@@ -313,8 +320,7 @@ class ESG(nn.Module):
         """
 
         self.logbook.new()
-        self.logbook.register("test", 1)
-        print("test registered")
+
         # self.logger.critical(f"Moran's I @ {'input':<8} : {I:.3f}")
 
         b, _, n, t = input.shape
@@ -335,7 +341,7 @@ class ESG(nn.Module):
 
         skip_list = [self.skip0(F.dropout(input, self.dropout, training=self.training))]
         for j in range(self.n_blocks):
-            x, skip_list = self.blocks[j](x, st_node_fea, skip_list)
+            x, skip_list = self.blocks[j](x, st_node_fea, skip_list, self.logbook)
 
         skip_list.append(self.skipE(x))
         skip_list = torch.cat(skip_list, -1)  # [B, skip_channels, N, n_layers+2]
