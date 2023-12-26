@@ -75,17 +75,17 @@ class Evolving_GConv(nn.Module):
             dy_graph, states_dy = self.scale_spc_EGL(input_state_i, states_dy)
             x_out.append(self.gconv(x_i, dy_graph))
 
-            print(dy_graph.shape)
-            print(states_dy.shape)
-
             logbook.register(
                 "I",
-                utils.autocorrelation.morans_I_numpy(
-                    # torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
-                    states_dy.cpu().detach().numpy(),
-                    dy_graph.cpu().detach().numpy(),
+                (
+                    I := utils.autocorrelation.morans_I_numpy(
+                        # torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
+                        states_dy.cpu().detach().numpy(),
+                        dy_graph.cpu().detach().numpy(),
+                    )
                 ),
             )
+            print(f"Moran's I @ {i_t}: {I}")
 
         x_out = torch.cat(x_out, dim=-1)  # [B, c_out, N, T]
         return x_out
