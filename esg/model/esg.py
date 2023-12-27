@@ -89,6 +89,7 @@ class Evolving_GConv(nn.Module):
                 (
                     I_x_i := utils.autocorrelation.morans_I_numpy(
                         torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
+                        .cpu()
                         .detach()
                         .numpy(),
                         dy_graph.cpu().detach().numpy(),
