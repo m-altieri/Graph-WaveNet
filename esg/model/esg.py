@@ -78,7 +78,7 @@ class Evolving_GConv(nn.Module):
             logbook.register(
                 "I_states_dy",
                 (
-                    I := utils.autocorrelation.morans_I_numpy(
+                    I_states_dy := utils.autocorrelation.morans_I_numpy(
                         states_dy.cpu().detach().numpy(),
                         dy_graph.cpu().detach().numpy(),
                     )
@@ -87,14 +87,17 @@ class Evolving_GConv(nn.Module):
             logbook.register(
                 "I_x_i",
                 (
-                    I := utils.autocorrelation.morans_I_numpy(
-                        torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2),
+                    I_x_i := utils.autocorrelation.morans_I_numpy(
+                        torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
+                        .detach()
+                        .numpy(),
                         dy_graph.cpu().detach().numpy(),
                     )
                 ),
             )
 
-            print(f"Moran's I @ {i_t}: {I}")
+            print(f"Moran's I (states_dy) @ {i_t}: {I_states_dy}")
+            print(f"Moran's I (x_i) @ {i_t}: {I_x_i}")
 
         x_out = torch.cat(x_out, dim=-1)  # [B, c_out, N, T]
         return x_out
