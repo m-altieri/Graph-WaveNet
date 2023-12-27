@@ -76,15 +76,24 @@ class Evolving_GConv(nn.Module):
             x_out.append(self.gconv(x_i, dy_graph))
 
             logbook.register(
-                "I",
+                "I_states_dy",
                 (
                     I := utils.autocorrelation.morans_I_numpy(
-                        # torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2)
                         states_dy.cpu().detach().numpy(),
                         dy_graph.cpu().detach().numpy(),
                     )
                 ),
             )
+            logbook.register(
+                "I_x_i",
+                (
+                    I := utils.autocorrelation.morans_I_numpy(
+                        torch.transpose(torch.squeeze(x_i, dim=-1), 1, 2),
+                        dy_graph.cpu().detach().numpy(),
+                    )
+                ),
+            )
+
             print(f"Moran's I @ {i_t}: {I}")
 
         x_out = torch.cat(x_out, dim=-1)  # [B, c_out, N, T]
@@ -369,7 +378,7 @@ class ESG(nn.Module):
         path = f"/home/workdir/experiments/spatial_ac/ESG-{self.num_nodes}"
         if not os.path.exists(path):
             os.makedirs(path)
-        self.logbook.save_plot(path, names=["I"])
+        self.logbook.save_plot(path, names=["I_states_dy", "I_x_i"])
         print("logbook saved")
 
         return x
